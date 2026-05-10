@@ -137,8 +137,8 @@ return (
                     <span className="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
                       {a.relevance_score?.toFixed(3)}
                     </span>
-href={a.pubmed_url}
-                      target="_blank"
+                    <a
+                      href={a.pubmed_url}
                       className="text-xs text-gray-400 hover:text-emerald-600 transition"
                     >
                       PMID:{a.pmid} &rarr;
