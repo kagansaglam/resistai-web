@@ -141,7 +141,7 @@ href={a.pubmed_url}
                       target="_blank"
                       className="text-xs text-gray-400 hover:text-emerald-600 transition"
                     >
-                      PMID:{a.pmid} →
+                      PMID:{a.pmid} &rarr;
                     </a>
                   </div>
                 </div>
