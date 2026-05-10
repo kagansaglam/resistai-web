@@ -30,7 +30,7 @@ export default function Dashboard() {
 
   async function fetchStats() {
     try {
-      const r = await fetch('http://localhost:8000/stats')
+      const r = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/stats`)
       const data = await r.json()
       setStats(data)
     } catch (e) {}
@@ -38,7 +38,7 @@ export default function Dashboard() {
 
   async function fetchProteins(tierFilter = '', limit = 50) {
     try {
-      let url = `http://localhost:8000/proteins?limit=${limit}`
+      let url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/proteins?limit=${limit}`
       if (tierFilter) url += `&tier=${tierFilter}`
       const r = await fetch(url)
       const data = await r.json()

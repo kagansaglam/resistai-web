@@ -66,10 +66,10 @@ return (
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
-          <p className="text-center text-sm text-gray-400">
-            No account?{' '}
-            <Link href="/auth/signup" className="text-emerald-400 hover:text-emerald-300">Sign up</Link>
-          </p>
+          <div className="flex justify-between items-center">
+            <Link href="/auth/forgot-password" className="text-sm text-emerald-400 hover:text-emerald-300">Forgot password?</Link>
+            <p className="text-sm text-gray-400">No account?{' '}<Link href="/auth/signup" className="text-emerald-400 hover:text-emerald-300">Sign up</Link></p>
+          </div>
         </form>
       </div>
     </main>
