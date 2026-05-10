@@ -13,7 +13,8 @@ export default function LiteratureSearch() {
   const [searched, setSearched] = useState(false)
   const router = useRouter()
   const supabase = createClient()
-useEffect(() => {
+
+  useEffect(() => {
     async function checkAuth() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) router.push('/auth/login')
@@ -46,14 +47,7 @@ const examples = [
     'TB isoniazid resistance InhA',
   ]
 
-const examples = [
-    'VIM-2 metallo-beta-lactamase inhibitor',
-    'KPC-2 carbapenem resistance mechanism',
-    'NDM-1 drug target structure',
-    'MRSA methicillin resistance',
-    'TB isoniazid resistance InhA',
-  ]
-return (
+  return (
     <div className="min-h-screen bg-stone-50">
       <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
@@ -61,17 +55,18 @@ return (
             <span className="text-xl">🧬</span>
             <span className="font-bold text-gray-900">ResistAI</span>
           </Link>
-          <div className="flex gap-4 text-sm text-gray-500">
+<div className="flex gap-4 text-sm text-gray-500">
             <Link href="/dashboard" className="hover:text-gray-900 transition">Proteins</Link>
             <Link href="/dashboard/search" className="text-emerald-600 font-medium">Literature</Link>
           </div>
         </div>
       </nav>
-<div className="max-w-4xl mx-auto px-8 py-12">
+
+      <div className="max-w-4xl mx-auto px-8 py-12">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Literature Search</h1>
         <p className="text-gray-500 text-sm mb-8">Search across 2,508 indexed PubMed articles on antibiotic resistance</p>
 
-        <form onSubmit={handleSearch} className="flex gap-3 mb-6">
+<form onSubmit={handleSearch} className="flex gap-3 mb-6">
           <input
             type="text"
             value={query}
@@ -84,24 +79,7 @@ return (
             disabled={loading}
             className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition"
           >
-<div className="max-w-4xl mx-auto px-8 py-12">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Literature Search</h1>
-        <p className="text-gray-500 text-sm mb-8">Search across 2,508 indexed PubMed articles on antibiotic resistance</p>
-
-        <form onSubmit={handleSearch} className="flex gap-3 mb-6">
-          <input
-            type="text"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            placeholder="e.g. VIM-2 metallo-beta-lactamase inhibitor"
-            className="flex-1 bg-white border border-stone-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-emerald-400"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition"
-          >
-{loading ? 'Searching...' : 'Search'}
+            {loading ? 'Searching...' : 'Search'}
           </button>
         </form>
 {!searched && (
@@ -133,15 +111,17 @@ return (
                     <p className="text-sm font-medium text-gray-900 leading-snug">{a.title}</p>
                     <p className="text-xs text-gray-400 mt-1">{a.journal} · {a.year}</p>
                   </div>
-                  <div className="flex flex-col items-end gap-2 shrink-0">
+<div className="flex flex-col items-end gap-2 shrink-0">
                     <span className="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
                       {a.relevance_score?.toFixed(3)}
                     </span>
-                    <a
+                    
                       href={a.pubmed_url}
+                      target="_blank"
+                      rel="noreferrer"
                       className="text-xs text-gray-400 hover:text-emerald-600 transition"
                     >
-                      PMID:{a.pmid} &rarr;
+                      PMID:{a.pmid}
                     </a>
                   </div>
                 </div>
