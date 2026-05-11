@@ -8,6 +8,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export default function LiteratureSearch() {
   const [query, setQuery] = useState('')
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
@@ -15,6 +16,9 @@ export default function LiteratureSearch() {
   const supabase = createClient()
 
   useEffect(() => {
+    if (searchParams?.get('q')) {
+      setQuery(searchParams.get('q'))
+    }
     async function checkAuth() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) router.push('/auth/login')
