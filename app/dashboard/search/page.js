@@ -16,8 +16,19 @@ export default function LiteratureSearch() {
   const supabase = createClient()
 
   useEffect(() => {
-    if (searchParams?.get('q')) {
-      setQuery(searchParams.get('q'))
+    const q = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('q') : null
+    if (q) {
+      setQuery(q)
+      setTimeout(() => {
+        fetch(`${API_URL}/search`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: q, n_results: 15 })
+        }).then(r => r.json()).then(data => {
+          setResults(data.results || [])
+          setSearched(true)
+        })
+      }, 100)
     }
     async function checkAuth() {
       const { data: { user } } = await supabase.auth.getUser()
