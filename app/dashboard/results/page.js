@@ -214,7 +214,7 @@ const tierLabel = (score) => {
                     rows={2}
                   />
                   {savingNote === p.id && <span className="text-xs text-gray-400">Saving...</span>}
-                  </div>
+                  {savingNote === p.id && <span className="text-xs text-gray-400">Saving...</span>}
                 </div>
 
                 {selected?.id === p.id && (
