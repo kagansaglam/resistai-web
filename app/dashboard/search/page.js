@@ -51,11 +51,11 @@ const examples = [
     <div className="min-h-screen bg-stone-50">
       <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <span className="text-xl">🧬</span>
-            <span className="font-bold text-gray-900">ResistAI</span>
+          <Link href="/" className="flex items-center gap-2">
+            <img src="/logo.png" alt="ResistAI" className="h-8 w-auto" />
           </Link>
 <div className="flex gap-4 text-sm text-gray-500">
+            <Link href="/" className="hover:text-gray-900 transition">Home</Link>
             <Link href="/dashboard" className="hover:text-gray-900 transition">Proteins</Link>
             <Link href="/dashboard/search" className="text-emerald-600 font-medium">Literature</Link>
           </div>

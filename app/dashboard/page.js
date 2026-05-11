@@ -82,11 +82,11 @@ export default function Dashboard() {
       {/* Navbar */}
       <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <span className="text-xl">🧬</span>
-            <span className="font-bold text-gray-900">ResistAI</span>
+          <Link href="/" className="flex items-center gap-2">
+            <img src="/logo.png" alt="ResistAI" className="h-8 w-auto" />
           </Link>
           <div className="flex gap-4 text-sm text-gray-500">
+            <Link href="/" className="hover:text-gray-900 transition">Home</Link>
             <Link href="/dashboard" className="text-emerald-600 font-medium">Proteins</Link>
             <Link href="/dashboard/search" className="hover:text-gray-900 transition">Literature</Link>
           </div>
@@ -161,7 +161,7 @@ export default function Dashboard() {
               </thead>
               <tbody>
                 {filtered.map((p, i) => (
-                  <tr key={p.uniprot_id} className="border-b border-stone-50 hover:bg-stone-50 transition cursor-pointer">
+                  <tr key={p.uniprot_id} onClick={() => window.location.href=`/dashboard/protein/${p.uniprot_id}`} className="border-b border-stone-50 hover:bg-stone-50 transition cursor-pointer">
                     <td className="px-6 py-3">
                       <div className="font-medium text-gray-900 text-sm">{p.gene}</div>
                       <div className="text-xs text-gray-400">{p.uniprot_id}</div>
