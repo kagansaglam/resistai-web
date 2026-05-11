@@ -106,8 +106,14 @@ useEffect(() => {
       const pdbId = pdbIds[selected.uniprot_id] || null
       if (!pdbId) { document.getElementById('result-viewer').innerHTML = '<p style="padding:20px;color:#999">No PDB structure available for this protein.</p>'; return }
       fetch(`https://files.rcsb.org/download/${pdbId}.pdb`)
-          })
+        .then(r => r.text())
+        .then(pdb => {
+          viewer.addModel(pdb, "pdb")
+          viewer.setStyle({}, { cartoon: { colorscheme: { prop: "ss", map: { h: "#4F46E5", s: "#7C3AED", loop: "#6D28D9" } } } })
+          viewer.zoomTo()
+          viewer.render()
         })
+        .catch(() => { console.log("PDB load failed") })
     }
 if (!window.$3Dmol) {
       document.head.appendChild(script)
