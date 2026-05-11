@@ -217,7 +217,7 @@ const tierLabel = (score) => {
                   </div>
                 </div>
 
-{selected?.id === p.id && (
+                {selected?.id === p.id && (
                   <div className="border-t border-stone-100 p-4">
                     <div className="flex gap-2 mb-3">
                       <span className="text-xs text-gray-400">drag to rotate · scroll to zoom</span>
