@@ -66,19 +66,28 @@ export default function Home() {
         <h2 className="text-3xl font-bold text-center mb-16 text-gray-900">Everything you need for resistance research</h2>
         <div className="grid grid-cols-3 gap-8">
           {[
-            { icon: "🔬", title: "3D Protein Viewer", desc: "Interactive 3D structures with binding pocket overlay. Powered by 3Dmol.js." },
-            { icon: "📊", title: "Druggability Dashboard", desc: "Compare druggability across resistance families with interactive charts." },
-            { icon: "🤖", title: "AI Research Assistant", desc: "Ask questions grounded in 2,508 PubMed articles via RAG + Llama 3.3." },
-            { icon: "⚡", title: "Nextflow Pipeline", desc: "Reproducible DSL2 pipeline. Runs locally, on Docker, SLURM, or LSF." },
-            { icon: "🗄️", title: "PostgreSQL Backend", desc: "All results persisted to a relational database with GFF3 export." },
-            { icon: "📧", title: "Email Reports", desc: "Export and email your analysis results as a PDF report. Coming soon." },
+            { icon: "🔬", title: "3D Protein Viewer", desc: "Interactive 3D structures with binding pocket overlay. Powered by 3Dmol.js.", href: "/dashboard" },
+            { icon: "📊", title: "Druggability Dashboard", desc: "Compare druggability across resistance families with interactive charts.", href: "/dashboard" },
+            { icon: "🤖", title: "AI Research Assistant", desc: "Ask questions grounded in 2,508 PubMed articles via RAG + Llama 3.3.", href: "/dashboard/search" },
+            { icon: "⚡", title: "Nextflow Pipeline", desc: "Reproducible DSL2 pipeline. Runs locally, on Docker, SLURM, or LSF.", href: "https://github.com/kagansaglam/resistai" },
+            { icon: "🗄️", title: "PostgreSQL Backend", desc: "All results persisted to a relational database with GFF3 export.", href: "https://github.com/kagansaglam/resistai-api" },
+            { icon: "📧", title: "Email Reports", desc: "Export and email your analysis results as a PDF report. Coming soon.", href: null },
           ].map((f) => (
-            <div key={f.title} className="p-6 border border-stone-200 bg-white rounded-xl hover:border-emerald-300 hover:shadow-sm transition">
-              <div className="text-3xl mb-4">{f.icon}</div>
-              <h3 className="font-semibold mb-2 text-gray-900">{f.title}</h3>
-              <p className="text-sm text-gray-500">{f.desc}</p>
-            </div>
-))}
+            f.href ? (
+              <Link key={f.title} href={f.href} className="p-6 border border-stone-200 bg-white rounded-xl hover:border-emerald-300 hover:shadow-sm transition block">
+                <div className="text-3xl mb-4">{f.icon}</div>
+                <h3 className="font-semibold mb-2 text-gray-900">{f.title}</h3>
+                <p className="text-sm text-gray-500">{f.desc}</p>
+              </Link>
+            ) : (
+              <div key={f.title} className="p-6 border border-stone-200 bg-white rounded-xl opacity-70">
+                <div className="text-3xl mb-4">{f.icon}</div>
+                <h3 className="font-semibold mb-2 text-gray-900">{f.title}</h3>
+                <p className="text-sm text-gray-500">{f.desc}</p>
+                <span className="text-xs text-amber-500 mt-2 block">Coming soon</span>
+              </div>
+            )
+          ))}
         </div>
       </section>
 
