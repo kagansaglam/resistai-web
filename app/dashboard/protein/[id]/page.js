@@ -98,29 +98,11 @@ const d = protein.druggability
         )}
 
         <div className="flex gap-3">
-href={`https://www.uniprot.org/uniprot/${protein.uniprot_id}`}
-            target="_blank"
-            rel="noreferrer"
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition"
-          >
-            View on UniProt &rarr;
-          </a>
-          
-            href={`https://alphafold.ebi.ac.uk/entry/${protein.uniprot_id}`}
-            target="_blank"
-            rel="noreferrer"
-            className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition"
-          >
-AlphaFold Structure &rarr;
-          </a>
-          <Link
-            href={`/dashboard/search?q=${protein.gene}`}
-            className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition"
-          >
-            Search Literature &rarr;
-          </Link>
+          <a href={`https://www.uniprot.org/uniprot/${protein.uniprot_id}`} target="_blank" rel="noreferrer" className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition">UniProt</a>
+          <a href={`https://alphafold.ebi.ac.uk/entry/${protein.uniprot_id}`} target="_blank" rel="noreferrer" className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">AlphaFold</a>
+          <Link href={`/dashboard/search`} className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">Search Literature</Link>
         </div>
       </div>
     </div>
-)
+  )
 }
