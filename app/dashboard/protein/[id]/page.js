@@ -101,6 +101,9 @@ const d = protein.druggability
           <a href={`https://www.uniprot.org/uniprot/${protein.uniprot_id}`} target="_blank" rel="noreferrer" className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition">UniProt</a>
           <a href={`https://alphafold.ebi.ac.uk/entry/${protein.uniprot_id}`} target="_blank" rel="noreferrer" className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">AlphaFold</a>
           <Link href={`/dashboard/search`} className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">Search Literature</Link>
+          <button onClick={saveProtein} disabled={saving || saved} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm rounded-lg transition">
+            {saved ? 'Saved!' : saving ? 'Saving...' : 'Save to Results'}
+          </button>
         </div>
       </div>
     </div>

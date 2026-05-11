@@ -89,6 +89,7 @@ export default function Dashboard() {
             <Link href="/" className="hover:text-gray-900 transition">Home</Link>
             <Link href="/dashboard" className="text-emerald-600 font-medium">Proteins</Link>
             <Link href="/dashboard/search" className="hover:text-gray-900 transition">Literature</Link>
+            <Link href="/dashboard/results" className="hover:text-gray-900 transition">My Results</Link>
           </div>
         </div>
         <div className="flex items-center gap-4">
