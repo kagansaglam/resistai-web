@@ -6,10 +6,9 @@ export default function Home() {
     <main className="min-h-screen bg-stone-50 text-gray-900">
       {/* Navbar */}
       <nav className="border-b border-stone-200 px-8 py-4 flex items-center justify-between bg-white">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🧬</span>
-          <span className="text-xl font-bold text-gray-900">ResistAI</span>
-        </div>
+        <Link href="/" className="flex items-center gap-2">
+          <img src="/logo.png" alt="ResistAI" className="h-10 w-auto" />
+        </Link>
         <div className="flex gap-6 text-sm text-gray-500">
           <a href="#features" className="hover:text-gray-900 transition">Features</a>
           <a href="#results" className="hover:text-gray-900 transition">Results</a>
@@ -95,7 +94,7 @@ export default function Home() {
       <footer className="border-t border-stone-200 px-8 py-8 text-center text-sm text-gray-400 bg-white">
         <p>ResistAI &mdash; Kagan Saglam &middot; MIT License &middot;{" "}
           <a href="https://github.com/kagansaglam/resistai" className="hover:text-gray-700 transition">GitHub</a> &middot;{" "}
-          <a href="https://doi.org/10.5281/zenodo.19697274" className="hover:text-gray-700 transition">DOI</a>
+          <a href="https://doi.org/10.5281/zenodo.19697274" target="_blank" rel="noreferrer" className="hover:text-gray-700 transition">DOI</a>
         </p>
       </footer>
     </main>
