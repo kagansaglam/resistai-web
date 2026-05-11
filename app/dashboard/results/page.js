@@ -9,8 +9,17 @@ export default function Results() {
   const [proteins, setProteins] = useState([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
+  const [notes, setNotes] = useState({})
+  const [savingNote, setSavingNote] = useState(null)
   const router = useRouter()
   const supabase = createClient()
+
+  async function saveNote(id, note) {
+    setSavingNote(id)
+    await supabase.from('saved_proteins').update({ notes: note }).eq('id', id)
+    setProteins(prev => prev.map(p => p.id === id ? { ...p, notes: note } : p))
+    setSavingNote(null)
+  }
 useEffect(() => {
     async function fetchResults() {
       const { data: { user } } = await supabase.auth.getUser()
@@ -194,6 +203,17 @@ const tierLabel = (score) => {
                       Literature
                     </Link>
                     <button onClick={() => removeProtein(p.id)} className="text-xs text-red-400 hover:text-red-600 transition">Remove</button>
+                  </div>
+                </div>
+                <div className="px-5 pb-4">
+                  <textarea
+                    defaultValue={p.notes || ''}
+                    onBlur={e => saveNote(p.id, e.target.value)}
+                    placeholder="Add notes about this protein..."
+                    className="w-full text-xs bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400 resize-none"
+                    rows={2}
+                  />
+                  {savingNote === p.id && <span className="text-xs text-gray-400">Saving...</span>}
                   </div>
                 </div>
 
