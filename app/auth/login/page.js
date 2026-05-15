@@ -27,7 +27,7 @@ return (
     <main className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <span className="text-4xl">🧬</span>
+          <img src="/logo.png" alt="ResistAI" className="h-12 w-auto mx-auto" />
           <h1 className="text-2xl font-bold text-white mt-3">Sign in to ResistAI</h1>
           <p className="text-gray-400 mt-1 text-sm">Antibiotic resistance research platform</p>
         </div>

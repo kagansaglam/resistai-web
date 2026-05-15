@@ -11,24 +11,39 @@ export default function LiteratureSearch() {
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
+  const [aiAnswer, setAiAnswer] = useState('')
+  const [aiLoading, setAiLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
   async function doSearch(q) {
     setLoading(true)
     setSearched(true)
+    setAiAnswer('')
     try {
       const r = await fetch(`${API_URL}/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: q, n_results: 15 })
+        body: JSON.stringify({ query: q, n_results: 10 })
       })
       const data = await r.json()
       setResults(data.results || [])
+      setLoading(false)
+      if (data.results?.length > 0) {
+        setAiLoading(true)
+        const aiR = await fetch(`${API_URL}/ask`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: q, articles: data.results })
+        })
+        const aiData = await aiR.json()
+        setAiAnswer(aiData.answer || '')
+        setAiLoading(false)
+      }
     } catch (e) {
       setResults([])
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   useEffect(() => {
@@ -110,6 +125,26 @@ export default function LiteratureSearch() {
                 </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {aiLoading && (
+          <div className="bg-white border border-stone-200 rounded-xl p-6 mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-gray-400">AI is analysing the literature...</span>
+            </div>
+          </div>
+        )}
+
+        {aiAnswer && (
+          <div className="bg-white border border-emerald-200 rounded-xl p-6 mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg">🤖</span>
+              <h3 className="font-semibold text-gray-900 text-sm">AI Research Assistant</h3>
+              <span className="text-xs text-gray-400 ml-auto">Powered by Llama 3.3</span>
+            </div>
+            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{aiAnswer}</p>
           </div>
         )}
 
