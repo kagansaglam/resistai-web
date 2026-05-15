@@ -19,7 +19,7 @@ export default function Home() {
         </div>
       </nav>
 <section className="px-8 py-20 text-center max-w-5xl mx-auto">
-        <div className="inline-block px-3 py-1 text-xs bg-emerald-100 text-emerald-700 rounded-full mb-6 border border-emerald-200">144 WHO Priority Proteins Analysed</div>
+        <div className="inline-block px-3 py-1 text-xs bg-emerald-100 text-emerald-700 rounded-full mb-6 border border-emerald-200">2,433 Resistance Proteins Analysed</div>
         <h1 className="text-5xl font-bold mb-6 leading-tight text-gray-900">AI-powered antibiotic<br /><span className="text-emerald-600">resistance research</span></h1>
         <p className="text-gray-500 text-lg mb-10 max-w-2xl mx-auto">ResistAI combines protein structure prediction, binding pocket detection, and generative AI to identify druggable targets across WHO priority resistance proteins.</p>
         <div className="flex gap-4 justify-center mb-16">
@@ -31,7 +31,7 @@ export default function Home() {
 <section id="results" className="px-8 py-12 border-y border-stone-200 bg-white">
         <div className="max-w-4xl mx-auto grid grid-cols-4 gap-8 text-center">
           {[
-            { value: "144", label: "Proteins analysed" },
+            { value: "2,433", label: "Proteins analysed" },
             { value: "48", label: "High druggability" },
             { value: "2,508", label: "PubMed articles" },
             { value: "0.983", label: "Best score" },
@@ -73,7 +73,7 @@ export default function Home() {
       </section>
 <section className="px-8 py-20 text-center border-t border-stone-200 bg-white">
         <h2 className="text-3xl font-bold mb-4 text-gray-900">Start your research today</h2>
-        <p className="text-gray-500 mb-8 max-w-xl mx-auto">Free access to 144 analysed resistance proteins, 2,508 indexed articles, and AI-powered literature synthesis.</p>
+        <p className="text-gray-500 mb-8 max-w-xl mx-auto">Free access to 2,433 analysed resistance proteins, 2,508 indexed articles, and AI-powered literature synthesis.</p>
         <Link href="/auth/signup" className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition inline-block">Create free account &rarr;</Link>
       </section>
 <footer className="border-t border-stone-200 px-8 py-8 text-center text-sm text-gray-400 bg-white">
