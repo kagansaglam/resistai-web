@@ -52,7 +52,7 @@ export default function Home() {
             { icon: "🤖", title: "AI Research Assistant", desc: "Ask questions grounded in 2,508 PubMed articles via RAG + Llama 3.3.", href: "/dashboard/search" },
             { icon: "⚡", title: "Nextflow Pipeline", desc: "Reproducible DSL2 pipeline. Runs locally, on Docker, SLURM, or LSF.", href: "https://github.com/kagansaglam/resistai" },
             { icon: "🗄️", title: "PostgreSQL Backend", desc: "All results persisted to a relational database with GFF3 export.", href: "https://github.com/kagansaglam/resistai-api" },
-            { icon: "📧", title: "Email Reports", desc: "Export and email your analysis results as a PDF report. Coming soon.", href: null },
+            { icon: "📧", title: "Email Reports", desc: "Export and email your analysis results directly to your inbox.", href: "/dashboard/report" },
           ].map((f) => (
             f.href ? (
 <Link key={f.title} href={f.href} className="p-6 border border-stone-200 bg-white rounded-xl hover:border-emerald-300 hover:shadow-sm transition block">
