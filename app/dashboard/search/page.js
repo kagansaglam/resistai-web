@@ -13,6 +13,10 @@ export default function LiteratureSearch() {
   const [searched, setSearched] = useState(false)
   const [aiAnswer, setAiAnswer] = useState('')
   const [aiLoading, setAiLoading] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
+  const [userName, setUserName] = useState('')
+  const [emailSending, setEmailSending] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -20,6 +24,7 @@ export default function LiteratureSearch() {
     setLoading(true)
     setSearched(true)
     setAiAnswer('')
+    setEmailSent(false)
     try {
       const r = await fetch(`${API_URL}/search`, {
         method: 'POST',
@@ -50,6 +55,8 @@ export default function LiteratureSearch() {
     async function init() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth/login'); return }
+      setUserEmail(user.email || '')
+      setUserName(user.user_metadata?.full_name || user.email?.split('@')[0] || 'Researcher')
       const params = new URLSearchParams(window.location.search)
       const q = params.get('q')
       if (q) {
@@ -64,6 +71,31 @@ export default function LiteratureSearch() {
     e.preventDefault()
     if (!query.trim()) return
     doSearch(query)
+  }
+
+  async function handleEmailReport() {
+    if (!userEmail || !aiAnswer || results.length === 0) return
+    setEmailSending(true)
+    try {
+      const r = await fetch(`${API_URL}/send-report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to_email: userEmail,
+          user_name: userName,
+          query: query,
+          answer: aiAnswer,
+          articles: results
+        })
+      })
+      const data = await r.json()
+      if (data.success) {
+        setEmailSent(true)
+      }
+    } catch (e) {
+      console.error('Email send failed:', e)
+    }
+    setEmailSending(false)
   }
 
   const examples = [
@@ -145,6 +177,33 @@ export default function LiteratureSearch() {
               <span className="text-xs text-gray-400 ml-auto">Powered by Llama 3.3</span>
             </div>
             <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{aiAnswer}</p>
+
+            {/* Email Report Button */}
+            <div className="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between">
+              <p className="text-xs text-gray-400">
+                Report will be sent to <span className="font-medium text-gray-600">{userEmail}</span>
+              </p>
+              {emailSent ? (
+                <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                  ✓ Report sent to your email
+                </span>
+              ) : (
+                <button
+                  onClick={handleEmailReport}
+                  disabled={emailSending}
+                  className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition"
+                >
+                  {emailSending ? (
+                    <>
+                      <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    <>📧 Email Report</>
+                  )}
+                </button>
+              )}
+            </div>
           </div>
         )}
 
