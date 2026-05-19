@@ -1,7 +1,9 @@
 import Link from 'next/link'
 import HeroViewer from '../components/HeroViewer'
+import HowItWorks from '../components/HowItWorks'
 
-const steps = [
+// steps moved to HowItWorks component
+const steps_UNUSED = [
   {
     step: "01", icon: "🧬", title: "Protein input",
     sub: "UniProt ID or sequence",
@@ -127,7 +129,7 @@ export default function Home() {
           <p className="text-gray-500">From protein identifier to ranked druggable targets — fully automated, reproducible, and AI-native.</p>
         </div>
         <div className="space-y-3">
-          {steps.map((s) => (
+          <HowItWorks />
             <details key={s.step} className={`group bg-white border ${s.color} rounded-xl overflow-hidden`}>
               <summary className="flex gap-5 p-5 cursor-pointer list-none items-center select-none hover:bg-stone-50 transition">
                 <div className="shrink-0 w-10 h-10 bg-stone-50 border border-stone-200 rounded-lg flex items-center justify-center text-lg">{s.icon}</div>
