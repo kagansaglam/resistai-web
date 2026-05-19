@@ -4,25 +4,28 @@ import { createClient } from '../../lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const PAGE_SIZE = 50
+
 export default function Dashboard() {
   const [user, setUser] = useState(null)
   const [proteins, setProteins] = useState([])
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [search, setSearch] = useState('')
   const [tier, setTier] = useState('')
+  const [offset, setOffset] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
   const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
     async function init() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/auth/login')
-        return
-      }
+      if (!user) { router.push('/auth/login'); return }
       setUser(user)
-      await Promise.all([fetchStats(), fetchProteins()])
+      await Promise.all([fetchStats(), fetchProteins('', 0)])
       setLoading(false)
     }
     init()
@@ -30,20 +33,39 @@ export default function Dashboard() {
 
   async function fetchStats() {
     try {
-      const r = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/stats`)
+      const r = await fetch(`${API_URL}/stats`)
       const data = await r.json()
       setStats(data)
     } catch (e) {}
   }
 
-  async function fetchProteins(tierFilter = '', limit = 50) {
+  async function fetchProteins(tierFilter = '', newOffset = 0) {
     try {
-      let url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/proteins?limit=${limit}`
+      let url = `${API_URL}/proteins?limit=${PAGE_SIZE}&offset=${newOffset}`
       if (tierFilter) url += `&tier=${tierFilter}`
       const r = await fetch(url)
       const data = await r.json()
-      setProteins(data)
+      if (newOffset === 0) {
+        setProteins(data)
+      } else {
+        setProteins(prev => [...prev, ...data])
+      }
+      setHasMore(data.length === PAGE_SIZE)
+      setOffset(newOffset + data.length)
     } catch (e) {}
+  }
+
+  async function handleLoadMore() {
+    setLoadingMore(true)
+    await fetchProteins(tier, offset)
+    setLoadingMore(false)
+  }
+
+  async function handleTierChange(newTier) {
+    setTier(newTier)
+    setOffset(0)
+    setProteins([])
+    await fetchProteins(newTier, 0)
   }
 
   async function handleSignOut() {
@@ -79,7 +101,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      {/* Navbar */}
       <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2">
@@ -94,17 +115,11 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-400">{user?.email}</span>
-          <button
-            onClick={handleSignOut}
-            className="text-sm text-gray-500 hover:text-gray-900 transition"
-          >
-            Sign out
-          </button>
+          <button onClick={handleSignOut} className="text-sm text-gray-500 hover:text-gray-900 transition">Sign out</button>
         </div>
       </nav>
 
       <div className="max-w-7xl mx-auto px-8 py-8">
-        {/* Stats */}
         {stats && (
           <div className="grid grid-cols-4 gap-4 mb-8">
             {[
@@ -121,7 +136,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Filters */}
         <div className="flex gap-3 mb-6">
           <input
             type="text"
@@ -132,7 +146,7 @@ export default function Dashboard() {
           />
           <select
             value={tier}
-            onChange={e => { setTier(e.target.value); fetchProteins(e.target.value) }}
+            onChange={e => handleTierChange(e.target.value)}
             className="bg-white border border-stone-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-400"
           >
             <option value="">All tiers</option>
@@ -142,11 +156,10 @@ export default function Dashboard() {
           </select>
         </div>
 
-        {/* Table */}
         <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
             <h2 className="font-semibold text-gray-900">Resistance Proteins</h2>
-            <span className="text-sm text-gray-400">{filtered.length} proteins</span>
+            <span className="text-sm text-gray-400">{filtered.length} loaded · {stats?.total_proteins} total</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -161,7 +174,7 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((p, i) => (
+                {filtered.map((p) => (
                   <tr key={p.uniprot_id} onClick={() => window.location.href=`/dashboard/protein/${p.uniprot_id}`} className="border-b border-stone-50 hover:bg-stone-50 transition cursor-pointer">
                     <td className="px-6 py-3">
                       <div className="font-medium text-gray-900 text-sm">{p.gene}</div>
@@ -181,6 +194,24 @@ export default function Dashboard() {
               </tbody>
             </table>
           </div>
+
+          {/* Load More */}
+          {hasMore && (
+            <div className="px-6 py-4 border-t border-stone-100 text-center">
+              <button
+                onClick={handleLoadMore}
+                disabled={loadingMore}
+                className="px-6 py-2.5 bg-white border border-stone-200 hover:border-emerald-300 hover:text-emerald-600 text-sm text-gray-600 rounded-lg transition disabled:opacity-50"
+              >
+                {loadingMore ? 'Loading...' : `Load more proteins`}
+              </button>
+            </div>
+          )}
+          {!hasMore && proteins.length > 0 && (
+            <div className="px-6 py-4 border-t border-stone-100 text-center text-xs text-gray-400">
+              All {proteins.length} proteins loaded
+            </div>
+          )}
         </div>
       </div>
     </div>
