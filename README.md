@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ResistAI Web
 
-## Getting Started
+Web platform for the [ResistAI](https://github.com/kagansaglam/resistai) antibiotic resistance research platform.
 
-First, run the development server:
+**Live site:** [resistai.bio](https://resistai.bio)
+**Deploy:** Vercel
+
+---
+
+## Features
+
+- **Protein search** — browse and filter 2,433 AMR proteins by druggability tier, resistance family, and organism
+- **Druggability dashboard** — interactive charts, binding pocket details, and AlphaFold structure viewer
+- **ESM-2 similarity search** — find related proteins using protein language model embeddings
+- **Literature RAG** — semantic search across 2,508 PubMed articles
+- **AI research assistant** — ask questions about AMR targets, grounded in indexed literature (Llama 3.3 70B)
+- **Email reports** — receive druggability summaries via email (Resend)
+
+---
+
+## Tech Stack
+
+| Layer | Tool |
+|---|---|
+| Framework | Next.js 14 (App Router) |
+| Styling | Tailwind CSS |
+| Database / Auth | Supabase |
+| Deploy | Vercel |
+| Email | Resend |
+| API | [resistai-api.onrender.com](https://resistai-api.onrender.com) |
+
+---
+
+## Local Development
 
 ```bash
+git clone https://github.com/kagansaglam/resistai-web.git
+cd resistai-web
+npm install
+cp .env.example .env.local
+# Add NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, API_URL
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Related Repositories
 
-## Learn More
+| Repo | Description |
+|---|---|
+| [resistai](https://github.com/kagansaglam/resistai) | Pipeline (Nextflow, ESM-2, fpocket, XGBoost) |
+| [resistai-api](https://github.com/kagansaglam/resistai-api) | FastAPI backend |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
