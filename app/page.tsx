@@ -19,12 +19,39 @@ export default function Home() {
         </div>
       </nav>
 <section className="px-8 py-20 text-center max-w-5xl mx-auto">
-        <div className="inline-block px-3 py-1 text-xs bg-emerald-100 text-emerald-700 rounded-full mb-6 border border-emerald-200">2,433 Resistance Proteins Analysed</div>
-        <h1 className="text-5xl font-bold mb-6 leading-tight text-gray-900">AI-powered antibiotic<br /><span className="text-emerald-600">resistance research</span></h1>
-        <p className="text-gray-500 text-lg mb-10 max-w-2xl mx-auto">ResistAI combines protein structure prediction, binding pocket detection, and generative AI to identify druggable targets across WHO priority resistance proteins.</p>
+        {/* Problem badge */}
+        <div className="inline-flex items-center gap-2 px-3 py-1 text-xs bg-red-50 text-red-600 rounded-full mb-6 border border-red-200">
+          <span className="w-1.5 h-1.5 bg-red-500 rounded-full inline-block"></span>
+          700,000 deaths/year from antibiotic resistance — and rising
+        </div>
+
+        {/* Headline */}
+        <h1 className="text-5xl font-bold mb-5 leading-tight text-gray-900">
+          Identify druggable targets in<br />
+          <span className="text-emerald-600">antibiotic resistance proteins</span>
+        </h1>
+
+        {/* Problem / Solution / Outcome */}
+        <div className="grid grid-cols-3 gap-6 max-w-3xl mx-auto mb-10 text-left">
+          <div className="p-4 bg-white border border-stone-200 rounded-xl">
+            <div className="text-xs font-semibold text-red-500 uppercase tracking-wider mb-2">Problem</div>
+            <p className="text-sm text-gray-600 leading-relaxed">Druggability analysis and literature mining are fragmented across incompatible tools.</p>
+          </div>
+          <div className="p-4 bg-white border border-emerald-200 rounded-xl">
+            <div className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-2">Solution</div>
+            <p className="text-sm text-gray-600 leading-relaxed">ResistAI integrates AlphaFold, ESM-2 embeddings, fpocket, and RAG into one automated pipeline.</p>
+          </div>
+          <div className="p-4 bg-white border border-stone-200 rounded-xl">
+            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Outcome</div>
+            <p className="text-sm text-gray-600 leading-relaxed">Ranked druggable pockets + AI-cited literature in seconds — for any WHO priority pathogen.</p>
+          </div>
+        </div>
+
+        {/* CTAs */}
         <div className="flex gap-4 justify-center mb-16">
-          <Link href="/auth/signup" className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition">Get started &mdash; free &rarr;</Link>
-          <a href="https://github.com/kagansaglam/resistai" target="_blank" className="px-6 py-3 border border-gray-300 hover:border-gray-400 rounded-lg font-medium transition text-gray-700">View on GitHub</a>
+          <Link href="/auth/signup" className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition">Get started — free →</Link>
+          <Link href="/dashboard/search?q=VIM-2+metallo-beta-lactamase" className="px-6 py-3 border border-stone-200 hover:border-emerald-300 hover:text-emerald-600 rounded-lg font-medium transition text-gray-700">Try with VIM-2 →</Link>
+          <a href="https://github.com/kagansaglam/resistai" target="_blank" className="px-6 py-3 border border-gray-300 hover:border-gray-400 rounded-lg font-medium transition text-gray-700">GitHub</a>
         </div>
         <HeroViewer />
       </section>
