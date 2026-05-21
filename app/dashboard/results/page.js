@@ -112,9 +112,9 @@ useEffect(() => {
         'P0A0C1': '4ORK',
         'P9WJG3': '4ILU',
       }
-      const pdbId = pdbIds[selected.uniprot_id] || null
-      if (!pdbId) { document.getElementById('result-viewer').innerHTML = '<p style="padding:20px;color:#999">No PDB structure available for this protein.</p>'; return }
-      fetch(`https://files.rcsb.org/download/${pdbId}.pdb`)
+      const uid = selected.uniprot_id
+      const afUrl = `https://alphafold.ebi.ac.uk/files/AF-${uid}-F1-model_v6.pdb`
+      fetch(afUrl)
         .then(r => r.text())
         .then(pdb => {
           viewer.addModel(pdb, "pdb")
