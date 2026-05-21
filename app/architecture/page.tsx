@@ -169,6 +169,7 @@ export default function Architecture() {
           <a href="https://github.com/kagansaglam/resistai" target="_blank" rel="noreferrer" className="px-5 py-2.5 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition">View on GitHub →</a>
           <a href="https://resistai-api.onrender.com/docs" target="_blank" rel="noreferrer" className="px-5 py-2.5 border border-stone-200 hover:border-emerald-300 text-gray-700 hover:text-emerald-600 text-sm font-medium rounded-lg transition">API docs →</a>
           <Link href="/dashboard" className="px-5 py-2.5 border border-stone-200 hover:border-emerald-300 text-gray-700 hover:text-emerald-600 text-sm font-medium rounded-lg transition">Open dashboard →</Link>
+          <Link href="/case-study/vim2" className="px-5 py-2.5 border border-stone-200 hover:border-emerald-300 text-gray-700 hover:text-emerald-600 text-sm font-medium rounded-lg transition">VIM-7 case study →</Link>
         </div>
 
       </div>
