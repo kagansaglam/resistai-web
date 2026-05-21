@@ -88,7 +88,13 @@ export default function VIM2CaseStudy() {
               </div>
             ))}
           </div>
-          <div className="bg-stone-50 rounded-xl p-5 border border-stone-100">
+
+          <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+            <p className="text-xs text-amber-700 leading-relaxed">
+              <strong>Note:</strong> Druggability scores are structural proxies computed by fpocket on AlphaFold-predicted structures (Le Guilloux et al. 2009). Thresholds: high ≥ 0.7, medium ≥ 0.4. Experimental validation is required to confirm binding site tractability.
+            </p>
+          </div>
+          <div className="bg-stone-50 rounded-xl p-5 border border-stone-100 mt-4">
             <h3 className="text-sm font-semibold text-gray-900 mb-2">Interpretation</h3>
             <p className="text-sm text-gray-500 leading-relaxed">
               fpocket identified 11 surface cavities in the AlphaFold-predicted VIM-7 structure. The top-ranked pocket (druggability score 0.747) corresponds to the active site zinc-binding cleft — a well-characterised pharmacological hotspot. A score above 0.7 indicates high predicted tractability for small-molecule inhibitor binding, consistent with published crystallographic and fragment screening data for VIM-type MBLs.

@@ -141,6 +141,12 @@ export default function Architecture() {
               </div>
             ))}
           </div>
+          <div className="mt-6 p-5 bg-amber-50 border border-amber-200 rounded-xl">
+            <h3 className="text-sm font-semibold text-amber-800 mb-2">Scientific disclaimer</h3>
+            <p className="text-sm text-amber-700 leading-relaxed">
+              Druggability scores are computed by fpocket and serve as structural proxies for binding site tractability. Thresholds (high ≥ 0.7, medium ≥ 0.4) are conservative estimates based on Le Guilloux et al. 2009. Scores reflect static AlphaFold-predicted structures and do not account for protein flexibility or allosteric effects. Experimental validation is required to confirm druggability.
+            </p>
+          </div>
         </div>
 
         {/* Datasets */}
