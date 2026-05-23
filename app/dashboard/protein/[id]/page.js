@@ -25,6 +25,7 @@ export default function ProteinDetail() {
     async function init() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth/login'); return }
+      setUserEmail(user.email || '')
       const r = await fetch(`${API_URL}/proteins/${id}`)
       if (r.ok) {
         const data = await r.json()
