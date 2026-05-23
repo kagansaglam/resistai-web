@@ -10,6 +10,7 @@ export default function Home() {
           <img src="/logo.png" alt="ResistAI" className="h-10 w-auto" />
         </Link>
         <div className="flex gap-6 text-sm text-gray-500">
+          <a href="#why-resistai" className="hover:text-gray-900 transition">Why ResistAI</a>
           <a href="#how-it-works" className="hover:text-gray-900 transition">How it works</a>
           <a href="#features" className="hover:text-gray-900 transition">Features</a>
           <a href="#results" className="hover:text-gray-900 transition">Results</a>
@@ -70,7 +71,7 @@ export default function Home() {
         </div>
       </section>
       {/* Why ResistAI section */}
-      <section className="px-8 py-24 bg-white border-y border-stone-200">
+      <section id="why-resistai" className="px-8 py-24 bg-white border-y border-stone-200">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">Why ResistAI?</h2>
