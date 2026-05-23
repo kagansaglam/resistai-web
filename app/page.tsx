@@ -50,7 +50,6 @@ export default function Home() {
         <div className="flex gap-4 justify-center mb-16">
           <Link href="/auth/signup" className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition">Get started — free →</Link>
           <Link href="/dashboard/search?q=VIM-2+metallo-beta-lactamase" className="px-6 py-3 border border-stone-200 hover:border-emerald-300 hover:text-emerald-600 rounded-lg font-medium transition text-gray-700">Try with VIM-2 →</Link>
-          <a href="https://github.com/kagansaglam/resistai" target="_blank" className="px-6 py-3 border border-gray-300 hover:border-gray-400 rounded-lg font-medium transition text-gray-700">GitHub</a>
         </div>
         <HeroViewer />
       </section>
