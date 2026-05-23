@@ -5,12 +5,18 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
 export default function Results() {
   const [proteins, setProteins] = useState([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
   const [notes, setNotes] = useState({})
   const [savingNote, setSavingNote] = useState(null)
+  const [userEmail, setUserEmail] = useState('')
+  const [emailSending, setEmailSending] = useState(null)
+  const [emailSent, setEmailSent] = useState({})
+  const [allEmailSending, setAllEmailSending] = useState(false)
+  const [allEmailSent, setAllEmailSent] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -20,10 +26,12 @@ export default function Results() {
     setProteins(prev => prev.map(p => p.id === id ? { ...p, notes: note } : p))
     setSavingNote(null)
   }
-useEffect(() => {
+
+  useEffect(() => {
     async function fetchResults() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth/login'); return }
+      setUserEmail(user.email || '')
       const { data } = await supabase
         .from('saved_proteins')
         .select('*')
@@ -34,7 +42,7 @@ useEffect(() => {
     fetchResults()
   }, [])
 
-useEffect(() => {
+  useEffect(() => {
     if (!selected) return
     const script = document.createElement('script')
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.1.0/3Dmol-min.js'
@@ -42,76 +50,6 @@ useEffect(() => {
       const el = document.getElementById('result-viewer')
       if (!el) return
       const viewer = window.$3Dmol.createViewer(el, { backgroundColor: '#f5f0eb' })
-      const pdbIds = {
-        'P0AES4': '1AB4',
-        'P31224': '1IWG',
-        'P0AAW9': '4C48',
-        'P0AE06': '2F1M',
-        'P52477': '1T5E',
-        'P9WGR1': '1BVR',
-        'P0C002': '7S2I',
-        'P52002': '2V50',
-        'P9WGT3': '1UZL',
-        'P9WIE5': '1SJ2',
-        'Q2TR58': '4OH0',
-        'P05057': '1KAN',
-        'P14488': '6DJA',
-        'Q840P9': '2Y87',
-        'Q9L4P2': '4JF4',
-        'A0A5R8T042': '4HBT',
-        'P52700': '1SML',
-        'C0HMD9': '7S2L',
-        'P59655': '2VEF',
-        'P9WMQ5': '6ACA',
-        'A0QZ11': '5TW1',
-        'P00484': '1CIA',
-        'Q43899': '4E8O',
-        'P17585': '2PBE',
-        'P0AC13': '1AJ0',
-        'P0AES6': '1AJ6',
-        'A0A1C3NEV1': '5MX9',
-        'P05364': '1BLS',
-        'P72525': '2NOV',
-        'P0AD64': '1ONG',
-        'P28585': '7U48',
-        'Q51487': '1WP1',
-        'Q8ZPX9': '4CS6',
-        'P9WFK7': '3R1K',
-        'Q9F663': '2OV5',
-        'A0QUE0': '6YXU',
-        'C7C422': '3PG4',
-        'P52699': '1DD6',
-        'Q7WYA8': '6R73',
-        'A0A0R6L508': '5GOV',
-        'P26918': '1X8G',
-        'P60281': '5TW1',
-        'Q5U7L7': '6BM9',
-        'Q47066': '1BZA',
-        'Q99QC1': '1ZKJ',
-        'O05701': '1AD1',
-        'P35804': '1JTG',
-        'P9WQG9': '1M44',
-        'Q44057': '4EVY',
-        'P9WI99': '3ATS',
-        'P02930': '1EK9',
-        'P9WG47': '3IFZ',
-        'A0A0F7KYQ8': '7UYA',
-        'O08498': '1M2X',
-        'P29808': '7MQK',
-        'P25910': '1A7T',
-        'P9WGY9': '4KBJ',
-        'P9WQB7': '2BMX',
-        'A0A649V088': '8SJ3',
-        'P0AE05': '4WQK',
-        'P04190': '1BC2',
-        'P0AG05': '7UY4',
-        'P00552': '1ND4',
-        'Q9R381': '1S3Z',
-        'P0AC11': '7S2J',
-        'Q7ATH7': '4QC6',
-        'P0A0C1': '4ORK',
-        'P9WJG3': '4ILU',
-      }
       const uid = selected.uniprot_id
       const afUrl = `https://alphafold.ebi.ac.uk/files/AF-${uid}-F1-model_v6.pdb`
       fetch(afUrl)
@@ -122,19 +60,66 @@ useEffect(() => {
           viewer.zoomTo()
           viewer.render()
         })
-        .catch(() => { console.log("PDB load failed") })
+        .catch(() => {
+          if (el) el.innerHTML = '<p style="padding:20px;color:#999;font-size:12px">No AlphaFold structure available for this protein.</p>'
+        })
     }
-if (!window.$3Dmol) {
+    if (!window.$3Dmol) {
       document.head.appendChild(script)
     } else {
       script.onload()
     }
   }, [selected])
 
-async function removeProtein(id) {
+  async function removeProtein(id) {
     await supabase.from('saved_proteins').delete().eq('id', id)
     setProteins(prev => prev.filter(p => p.id !== id))
     if (selected?.id === id) setSelected(null)
+  }
+
+  async function sendEmailReport(protein) {
+    if (!userEmail) return
+    setEmailSending(protein.id)
+    try {
+      const tier = protein.best_score >= 0.7 ? 'High' : protein.best_score >= 0.4 ? 'Medium' : 'Low'
+      await fetch(`${API_URL}/send-report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to_email: userEmail,
+          user_name: userEmail.split('@')[0],
+          query: `${protein.gene} (${protein.uniprot_id}) — druggability analysis`,
+          answer: `Gene: ${protein.gene} | Organism: ${protein.organism} | Family: ${protein.family} | Druggability: ${tier} (score: ${protein.best_score?.toFixed(3)}) | Notes: ${protein.notes || 'None'}`,
+          articles: []
+        })
+      })
+      setEmailSent(prev => ({ ...prev, [protein.id]: true }))
+    } catch (e) {}
+    setEmailSending(null)
+  }
+
+  async function sendAllEmailReport() {
+    if (!userEmail || proteins.length === 0) return
+    setAllEmailSending(true)
+    try {
+      const summary = proteins.map(p => {
+        const tier = p.best_score >= 0.7 ? 'High' : p.best_score >= 0.4 ? 'Medium' : 'Low'
+        return `${p.gene} (${p.uniprot_id}) — ${tier} druggability (${p.best_score?.toFixed(3)})`
+      }).join('\n')
+      await fetch(`${API_URL}/send-report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to_email: userEmail,
+          user_name: userEmail.split('@')[0],
+          query: `My ResistAI Results — ${proteins.length} saved proteins`,
+          answer: summary,
+          articles: []
+        })
+      })
+      setAllEmailSent(true)
+    } catch (e) {}
+    setAllEmailSending(false)
   }
 
   const tierColor = (score) => {
@@ -142,20 +127,20 @@ async function removeProtein(id) {
     if (score >= 0.4) return 'text-amber-600 bg-amber-50'
     return 'text-red-600 bg-red-50'
   }
-const tierLabel = (score) => {
+  const tierLabel = (score) => {
     if (score >= 0.7) return 'High'
     if (score >= 0.4) return 'Medium'
     return 'Low'
   }
 
   return (
-<div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-50">
       <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2">
             <img src="/logo.png" alt="ResistAI" className="h-8 w-auto" />
           </Link>
-<div className="flex gap-4 text-sm text-gray-500">
+          <div className="flex gap-4 text-sm text-gray-500">
             <Link href="/" className="hover:text-gray-900 transition">Home</Link>
             <Link href="/dashboard" className="hover:text-gray-900 transition">Proteins</Link>
             <Link href="/dashboard/search" className="hover:text-gray-900 transition">Literature</Link>
@@ -164,45 +149,80 @@ const tierLabel = (score) => {
         </div>
       </nav>
 
-<div className="max-w-6xl mx-auto px-8 py-10">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">My Results</h1>
-        <p className="text-gray-500 text-sm mb-8">Saved proteins for further analysis</p>
+      <div className="max-w-6xl mx-auto px-8 py-10">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">My Results</h1>
+            <p className="text-gray-500 text-sm">Saved proteins for further analysis</p>
+          </div>
+          {proteins.length > 0 && (
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-gray-400">{proteins.length} proteins saved</span>
+              {allEmailSent ? (
+                <span className="text-xs text-emerald-600 font-medium">✓ Report sent!</span>
+              ) : (
+                <button
+                  onClick={sendAllEmailReport}
+                  disabled={allEmailSending}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition"
+                >
+                  {allEmailSending ? 'Sending...' : '📧 Email all results'}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
 
         {loading && <div className="text-gray-400 text-sm">Loading...</div>}
 
-{!loading && proteins.length === 0 && (
+        {!loading && proteins.length === 0 && (
           <div className="text-center py-16 bg-white rounded-xl border border-stone-200">
             <p className="text-gray-400 text-sm mb-4">No saved proteins yet.</p>
             <Link href="/dashboard" className="text-emerald-600 hover:text-emerald-500 text-sm">Browse proteins &rarr;</Link>
           </div>
         )}
 
-{proteins.length > 0 && (
+        {proteins.length > 0 && (
           <div className="grid grid-cols-1 gap-4">
             {proteins.map(p => (
               <div key={p.id} className={`bg-white border rounded-xl transition ${selected?.id === p.id ? 'border-emerald-300 shadow-sm' : 'border-stone-200'}`}>
                 <div className="p-5 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div>
-
-<Link href={`/dashboard/protein/${p.uniprot_id}`} className="font-medium text-gray-900 hover:text-emerald-600 transition">{p.gene}</Link>
+                      <Link href={`/dashboard/protein/${p.uniprot_id}`} className="font-medium text-gray-900 hover:text-emerald-600 transition">{p.gene}</Link>
                       <p className="text-xs text-gray-400 mt-0.5">{p.uniprot_id} · {p.organism}</p>
                     </div>
                     <span className={`text-xs font-medium px-2 py-1 rounded-full ${tierColor(p.best_score)}`}>{tierLabel(p.best_score)}</span>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <span className="text-sm font-mono text-gray-900">{p.best_score?.toFixed(3)}</span>
                     <button
                       onClick={() => setSelected(selected?.id === p.id ? null : p)}
                       className="text-xs px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition"
                     >
-
-{selected?.id === p.id ? 'Hide 3D' : 'View 3D'}
+                      {selected?.id === p.id ? 'Hide 3D' : 'View 3D'}
                     </button>
                     <Link href={`/dashboard/search?q=${p.gene}`} className="text-xs px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition">
                       Literature
                     </Link>
-                    <button onClick={() => removeProtein(p.id)} className="text-xs text-red-400 hover:text-red-600 transition">Remove</button>
+                    {emailSent[p.id] ? (
+                      <span className="text-xs text-emerald-600 font-medium">✓ Sent</span>
+                    ) : (
+                      <button
+                        onClick={() => sendEmailReport(p)}
+                        disabled={emailSending === p.id}
+                        className="text-xs px-3 py-1.5 bg-stone-50 hover:bg-stone-100 text-gray-600 rounded-lg transition border border-stone-200"
+                      >
+                        {emailSending === p.id ? '...' : '📧'}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => removeProtein(p.id)}
+                      className="text-xs w-7 h-7 flex items-center justify-center text-red-400 hover:text-white hover:bg-red-500 rounded-lg transition border border-red-100 hover:border-red-500"
+                      title="Remove"
+                    >
+                      ✕
+                    </button>
                   </div>
                 </div>
                 <div className="px-5 pb-4">
@@ -213,7 +233,6 @@ const tierLabel = (score) => {
                     className="w-full text-xs bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400 resize-none"
                     rows={2}
                   />
-                  {savingNote === p.id && <span className="text-xs text-gray-400">Saving...</span>}
                   {savingNote === p.id && <span className="text-xs text-gray-400">Saving...</span>}
                 </div>
 
