@@ -14,7 +14,8 @@ export default function Home() {
           <a href="#how-it-works" className="hover:text-gray-900 transition">How it works</a>
           <a href="#features" className="hover:text-gray-900 transition">Features</a>
           <Link href="/architecture" className="hover:text-gray-900 transition">Architecture</Link>
-          <Link href="/case-study/vim2" className="hover:text-gray-900 transition">Case Study</Link>
+          <Link href="/case-study/vim2" className="hover:text-gray-900 transition">VIM-7</Link>
+          <Link href="/case-study/inha" className="hover:text-gray-900 transition">InhA</Link>
           <a href="https://github.com/kagansaglam/resistai" target="_blank" className="hover:text-gray-900 transition">GitHub</a>
         </div>
         <div className="flex gap-3">
