@@ -14,6 +14,7 @@ export default function ProteinDetail() {
   const [saving, setSaving] = useState(false)
   const [similar, setSimilar] = useState([])
   const [similarLoading, setSimilarLoading] = useState(false)
+  const [mlPrediction, setMlPrediction] = useState(null)
   const router = useRouter()
   const supabase = createClient()
 
@@ -36,6 +37,18 @@ export default function ProteinDetail() {
         } catch (e) {}
         setSimilarLoading(false)
       }
+      // Fetch ML prediction
+      try {
+        const mlR = await fetch(`${API_URL}/predict-druggability`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uniprot_id: id })
+        })
+        if (mlR.ok) {
+          const mlData = await mlR.json()
+          setMlPrediction(mlData)
+        }
+      } catch (e) {}
       setLoading(false)
     }
     init()
@@ -116,6 +129,37 @@ export default function ProteinDetail() {
             </div>
           </div>
         </div>
+
+        {/* ML Prediction */}
+        {mlPrediction && (
+          <div className="bg-white rounded-xl border border-stone-200 p-8 mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="font-semibold text-gray-900">ML Druggability Prediction</h2>
+              <span className="text-xs text-gray-400 bg-stone-50 px-2 py-0.5 rounded-full border border-stone-200">XGBoost + ESM-2</span>
+            </div>
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="bg-stone-50 rounded-lg p-4 text-center">
+                <div className={`text-xl font-bold ${mlPrediction.predicted_tier === 'high' ? 'text-emerald-600' : mlPrediction.predicted_tier === 'medium' ? 'text-amber-600' : 'text-red-600'}`}>
+                  {mlPrediction.predicted_tier.charAt(0).toUpperCase() + mlPrediction.predicted_tier.slice(1)}
+                </div>
+                <div className="text-xs text-gray-400 mt-1">Predicted tier</div>
+              </div>
+              <div className="bg-stone-50 rounded-lg p-4 text-center">
+                <div className="text-xl font-bold text-gray-900">{(mlPrediction.confidence * 100).toFixed(1)}%</div>
+                <div className="text-xs text-gray-400 mt-1">Confidence</div>
+              </div>
+              <div className="bg-stone-50 rounded-lg p-4 text-center">
+                <div className="text-xs text-gray-500 mt-2 leading-relaxed">
+                  H: {(mlPrediction.probabilities?.high * 100).toFixed(0)}% · 
+                  M: {(mlPrediction.probabilities?.medium * 100).toFixed(0)}% · 
+                  L: {(mlPrediction.probabilities?.low * 100).toFixed(0)}%
+                </div>
+                <div className="text-xs text-gray-400 mt-1">Probabilities</div>
+              </div>
+            </div>
+            <p className="text-xs text-gray-400">{mlPrediction.note}</p>
+          </div>
+        )}
 
         {/* Top pockets */}
         {protein.top_pockets?.length > 0 && (
