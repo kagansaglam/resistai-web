@@ -15,6 +15,9 @@ export default function ProteinDetail() {
   const [similar, setSimilar] = useState([])
   const [similarLoading, setSimilarLoading] = useState(false)
   const [mlPrediction, setMlPrediction] = useState(null)
+  const [userEmail, setUserEmail] = useState('')
+  const [emailSending, setEmailSending] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -68,6 +71,26 @@ export default function ProteinDetail() {
     })
     setSaved(true)
     setSaving(false)
+  }
+
+  async function handleEmailReport() {
+    if (!userEmail || !protein) return
+    setEmailSending(true)
+    try {
+      await fetch(`${API_URL}/send-report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to_email: userEmail,
+          user_name: userEmail.split('@')[0],
+          query: `${protein.gene} (${protein.uniprot_id}) — druggability analysis`,
+          answer: `Gene: ${protein.gene} | Organism: ${protein.organism} | Druggability: ${protein.druggability?.tier} (score: ${protein.druggability?.best_score?.toFixed(3)}) | ML Prediction: ${mlPrediction?.predicted_tier || 'N/A'} (confidence: ${mlPrediction ? (mlPrediction.confidence * 100).toFixed(1) + '%' : 'N/A'}) | Total pockets: ${protein.druggability?.total_pockets}`,
+          articles: []
+        })
+      })
+      setEmailSent(true)
+    } catch (e) {}
+    setEmailSending(false)
   }
 
   if (loading) return (
@@ -237,6 +260,13 @@ export default function ProteinDetail() {
           <button onClick={saveProtein} disabled={saving || saved} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm rounded-lg transition">
             {saved ? 'Saved!' : saving ? 'Saving...' : 'Save to Results'}
           </button>
+          {emailSent ? (
+            <span className="px-4 py-2 text-sm text-emerald-600 font-medium">✓ Report sent!</span>
+          ) : (
+            <button onClick={handleEmailReport} disabled={emailSending} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm rounded-lg transition">
+              {emailSending ? 'Sending...' : '📧 Email Report'}
+            </button>
+          )}
         </div>
       </div>
     </div>
