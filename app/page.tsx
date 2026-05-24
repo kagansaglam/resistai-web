@@ -11,6 +11,7 @@ export default function Home() {
         </Link>
         <div className="flex gap-6 text-sm text-gray-500">
           <a href="#why-resistai" className="hover:text-gray-900 transition">Why ResistAI</a>
+          <Link href="/dashboard/analyse" className="hover:text-gray-900 transition">Analyse</Link>
           <a href="#how-it-works" className="hover:text-gray-900 transition">How it works</a>
           <a href="#features" className="hover:text-gray-900 transition">Features</a>
           <Link href="/architecture" className="hover:text-gray-900 transition">Architecture</Link>
