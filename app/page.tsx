@@ -112,9 +112,14 @@ export default function Home() {
         <div className="mt-12 text-center">
           <p className="text-xs text-gray-400 mb-4 uppercase tracking-wider">Built with</p>
           <div className="flex flex-wrap justify-center gap-2">
-            {["Nextflow DSL2", "AlphaFold DB", "fpocket", "ESM-2 (650M)", "ChromaDB", "Llama 3.3 70B", "FastAPI", "Next.js", "Docker", "Slurm", "Supabase"].map((t) => (
+            {["Nextflow DSL2", "AlphaFold DB", "fpocket", "ESM-2", "ChromaDB", "Llama 3.3 70B", "FastAPI", "Next.js", "Docker", "Slurm", "Supabase"].map((t) => (
               <span key={t} className="px-3 py-1 text-xs bg-white border border-stone-200 rounded-full text-gray-600">{t}</span>
             ))}
+          </div>
+          <div className="mt-8">
+            <Link href="/architecture" className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition">
+              View full architecture →
+            </Link>
           </div>
         </div>
       </section>
