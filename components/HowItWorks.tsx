@@ -12,9 +12,9 @@ const steps = [
   },
   {
     step: "02", icon: "🏗️", title: "Structure & embedding",
-    sub: "AlphaFold DB + ESM-2 650M",
-    desc: "High-confidence 3D structures are pulled from AlphaFold DB v4. ESM-2 (650M parameters) generates a 1,280-dim protein embedding capturing evolutionary and structural context.",
-    badges: ["AlphaFold DB", "ESM-2 650M", "ESMFold fallback"],
+    sub: "AlphaFold DB + ESM-2 35M",
+    desc: "High-confidence 3D structures are pulled from AlphaFold DB v4. ESM-2 (35M parameters) generates a 480-dim protein embedding capturing evolutionary and structural context.",
+    badges: ["AlphaFold DB", "ESM-2 35M", "ESMFold fallback"],
     color: "border-teal-200",
     badgeColor: "bg-teal-50 text-teal-700",
   },
