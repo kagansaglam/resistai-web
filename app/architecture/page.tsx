@@ -39,7 +39,7 @@ export default function Architecture() {
               },
               {
                 layer: "Analysis", color: "bg-purple-50 text-purple-700 border-purple-200",
-                items: ["fpocket cavity detection", "Druggability scoring (≥0.7 = high)", "ESM-2 650M embeddings (1,280-dim)"],
+                items: ["fpocket cavity detection", "Druggability scoring (≥0.7 = high)", "ESM-2 embeddings (480-dim)"],
               },
               {
                 layer: "Storage", color: "bg-amber-50 text-amber-700 border-amber-200",
@@ -124,7 +124,7 @@ export default function Architecture() {
               },
               {
                 title: "Protein embeddings",
-                desc: "ESM-2 (esm2_t33_650M_UR50D, 650M parameters) generates a 1,280-dimensional per-protein embedding encoding evolutionary and structural context. Used for similarity search and downstream ML classification.",
+                desc: "ESM-2 (esm2_t12_35M_UR50D, 35M parameters) generates a 480-dimensional per-protein embedding encoding evolutionary and structural context. Used for similarity search and downstream ML classification.",
               },
               {
                 title: "Literature retrieval (RAG)",
@@ -157,7 +157,7 @@ export default function Architecture() {
               { name: "UniProt (reviewed)", scope: "2,433 resistance proteins — WHO ESKAPE + M. tuberculosis", source: "rest.uniprot.org" },
               { name: "AlphaFold DB v4", scope: "High-confidence predicted 3D structures", source: "alphafold.ebi.ac.uk" },
               { name: "PubMed / NCBI", scope: "2,508 indexed antibiotic resistance articles", source: "eutils.ncbi.nlm.nih.gov" },
-              { name: "ESM-2 model weights", scope: "esm2_t33_650M_UR50D (HuggingFace)", source: "huggingface.co/facebook/esm2_t33_650M_UR50D" },
+              { name: "ESM-2 model weights", scope: "esm2_t12_35M_UR50D (HuggingFace)", source: "huggingface.co/facebook/esm2_t12_35M_UR50D" },
             ].map((d) => (
               <div key={d.name} className="flex items-start gap-4 py-3 border-b border-stone-100 last:border-0">
                 <div className="flex-1">
