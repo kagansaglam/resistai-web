@@ -140,42 +140,6 @@ export default function Home() {
       </section>
 
 
-      {/* Under the hood */}
-      <section id="under-the-hood" className="px-8 py-24 bg-white border-y border-stone-200">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Under the hood</h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">Built on established scientific tools and a reproducible, production-grade engineering stack — not a thin AI wrapper.</p>
-          </div>
-          <div className="grid grid-cols-2 gap-6 mb-10">
-            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Scientific methods</h3>
-              <ul className="space-y-3 text-sm text-gray-600">
-                <li><strong className="text-gray-900">fpocket</strong> — alpha-sphere cavity detection with druggability scoring (Le Guilloux et al. 2009)</li>
-                <li><strong className="text-gray-900">AlphaFold DB v4</strong> — high-confidence predicted structures; ESMFold fallback</li>
-                <li><strong className="text-gray-900">ESM-2</strong> — protein language model embeddings for similarity search and ML</li>
-                <li><strong className="text-gray-900">XGBoost</strong> — druggability classifier, ROC-AUC 0.79 on 2,433 proteins</li>
-                <li><strong className="text-gray-900">RAG</strong> — ChromaDB vector retrieval over 2,508 PubMed articles + Llama 3.3</li>
-              </ul>
-            </div>
-            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Engineering stack</h3>
-              <ul className="space-y-3 text-sm text-gray-600">
-                <li><strong className="text-gray-900">Nextflow DSL2</strong> — modular, reproducible pipeline orchestration</li>
-                <li><strong className="text-gray-900">Docker + Singularity</strong> — fully containerised, HPC-ready (Slurm/LSF)</li>
-                <li><strong className="text-gray-900">FastAPI</strong> — REST API with OpenAPI docs, server-side inference</li>
-                <li><strong className="text-gray-900">ChromaDB</strong> — persistent vector store for embeddings + literature</li>
-                <li><strong className="text-gray-900">Next.js + Supabase</strong> — production frontend with auth</li>
-              </ul>
-            </div>
-          </div>
-          <div className="text-center">
-            <Link href="/architecture" className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition">
-              View full architecture →
-            </Link>
-          </div>
-        </div>
-      </section>
       <section className="px-8 py-20 text-center border-t border-stone-200 bg-white">
         <h2 className="text-3xl font-bold mb-4 text-gray-900">Start your research today</h2>
         <p className="text-gray-500 mb-8 max-w-xl mx-auto">Free access to 2,433 analysed resistance proteins, 2,508 indexed articles, and AI-powered literature synthesis.</p>
