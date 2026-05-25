@@ -120,7 +120,7 @@ export default function Home() {
       </section>
 
       <section id="features" className="px-8 py-24 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-16 text-gray-900">Everything you need for resistance research</h2>
+        <h2 className="text-3xl font-bold text-center mb-16 text-gray-900">Platform features</h2>
         <div className="grid grid-cols-3 gap-8">
           {[
             { icon: "🔬", title: "3D Protein Viewer", desc: "Interactive 3D structures with binding pocket overlay. Powered by 3Dmol.js.", href: "/dashboard" },
