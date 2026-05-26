@@ -72,6 +72,7 @@ export default function ProteinDetail() {
           viewer.setStyle({}, { cartoon: { colorscheme: { prop: 'ss', map: { h: '#4F46E5', s: '#7C3AED', loop: '#6D28D9' } } } })
           viewer.zoomTo()
           viewer.render()
+          viewer.resize()
         })
         .catch(() => { el.innerHTML = '<p style="padding:20px;color:#999;font-size:12px">No AlphaFold structure available for this protein.</p>' })
     }
@@ -317,7 +318,7 @@ export default function ProteinDetail() {
               <span className="text-xs text-gray-400 bg-stone-50 px-2 py-0.5 rounded-full border border-stone-200">AlphaFold · 3Dmol.js</span>
               <span className="text-xs text-gray-400 ml-auto">drag to rotate · scroll to zoom</span>
             </div>
-            <div id="protein-viewer" style={{ width: '100%', height: '400px', background: '#f5f0eb', borderRadius: '8px' }} />
+            <div id="protein-viewer" style={{ position: 'relative', width: '100%', height: '400px', background: '#f5f0eb', borderRadius: '8px', overflow: 'hidden' }} />
           </div>
         )}
 
