@@ -179,31 +179,6 @@ export default function ProteinDetail() {
           </div>
         </div>
 
-        {/* 3D Viewer */}
-        <div className="bg-white rounded-xl border border-stone-200 p-8 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <h2 className="font-semibold text-gray-900">3D Structure</h2>
-              <span className="text-xs text-gray-400 bg-stone-50 px-2 py-0.5 rounded-full border border-stone-200">AlphaFold · 3Dmol.js</span>
-            </div>
-            {isLoggedIn ? (
-              <button onClick={() => setShow3D(!show3D)} className="text-xs px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition">
-                {show3D ? 'Hide 3D' : 'View 3D'}
-              </button>
-            ) : (
-              <button disabled className="text-xs px-3 py-1.5 bg-stone-100 text-gray-400 rounded-lg cursor-not-allowed">🔒 View 3D</button>
-            )}
-          </div>
-          {show3D && isLoggedIn ? (
-            <div>
-              <p className="text-xs text-gray-400 mb-3">drag to rotate · scroll to zoom</p>
-              <div id="protein-viewer" style={{ width: '100%', height: '400px', background: '#f5f0eb', borderRadius: '8px' }} />
-            </div>
-          ) : (
-            <p className="text-sm text-gray-400">{isLoggedIn ? 'Click "View 3D" to load the AlphaFold structure.' : 'Sign up to view the interactive 3D protein structure.'}</p>
-          )}
-        </div>
-
         {/* ML Prediction */}
         {mlPrediction && (
           <div className="bg-white rounded-xl border border-stone-200 p-8 mb-6">
@@ -311,6 +286,9 @@ export default function ProteinDetail() {
 
           {isLoggedIn ? (
             <>
+              <button onClick={() => setShow3D(!show3D)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm rounded-lg transition">
+                {show3D ? 'Hide 3D' : 'View 3D'}
+              </button>
               <button onClick={saveProtein} disabled={saving || saved} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm rounded-lg transition">
                 {saved ? 'Saved!' : saving ? 'Saving...' : 'Save to Results'}
               </button>
@@ -324,11 +302,24 @@ export default function ProteinDetail() {
             </>
           ) : (
             <>
+              <button disabled className="px-4 py-2 bg-stone-100 text-gray-400 text-sm rounded-lg cursor-not-allowed">🔒 View 3D</button>
               <button disabled className="px-4 py-2 bg-stone-100 text-gray-400 text-sm rounded-lg cursor-not-allowed">🔒 Save to Results</button>
               <button disabled className="px-4 py-2 bg-stone-100 text-gray-400 text-sm rounded-lg cursor-not-allowed">🔒 Email Report</button>
             </>
           )}
         </div>
+
+        {/* 3D Viewer (toggled) */}
+        {show3D && isLoggedIn && (
+          <div className="mt-6 bg-white rounded-xl border border-stone-200 p-6">
+            <div className="flex items-center gap-2 mb-3">
+              <h2 className="font-semibold text-gray-900 text-sm">3D Structure</h2>
+              <span className="text-xs text-gray-400 bg-stone-50 px-2 py-0.5 rounded-full border border-stone-200">AlphaFold · 3Dmol.js</span>
+              <span className="text-xs text-gray-400 ml-auto">drag to rotate · scroll to zoom</span>
+            </div>
+            <div id="protein-viewer" style={{ width: '100%', height: '400px', background: '#f5f0eb', borderRadius: '8px' }} />
+          </div>
+        )}
 
         {/* Sign-up prompt */}
         {!isLoggedIn && (
