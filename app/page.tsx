@@ -128,12 +128,12 @@ export default function Home() {
         <h2 className="text-3xl font-bold text-center mb-16 text-gray-900">Platform features</h2>
         <div className="grid grid-cols-3 gap-8">
           {[
-            { icon: "🔬", title: "3D Protein Viewer", desc: "Interactive 3D structures with binding pocket overlay. Powered by 3Dmol.js.", href: "/dashboard" },
-            { icon: "📊", title: "Druggability Dashboard", desc: "Compare druggability across resistance families with interactive charts.", href: "/dashboard" },
-            { icon: "🤖", title: "AI Research Assistant", desc: "Ask questions grounded in 2,508 PubMed articles via RAG + Llama 3.3.", href: "/dashboard/search" },
-            { icon: "⚡", title: "Nextflow Pipeline", desc: "Reproducible DSL2 pipeline. Runs locally, on Docker, SLURM, or LSF.", href: "https://github.com/kagansaglam/resistai" },
-            { icon: "🗄️", title: "REST API & CLI", desc: "FastAPI backend with ChromaDB vector search. Full OpenAPI docs available.", href: "https://resistai-api.onrender.com/docs" },
-            { icon: "📧", title: "Email Reports", desc: "Export and email your analysis results directly to your inbox.", href: "/dashboard/report" },
+            { icon: "🧪", title: "Analyse Your Protein", desc: "Enter any UniProt ID for on-demand druggability analysis, ESM-2 similarity search, and ML prediction.", href: "/dashboard/analyse" },
+            { icon: "🤖", title: "AI Research Assistant", desc: "Ask questions grounded in 2,508 PubMed articles via RAG + Llama 3.3, with PMID-cited answers.", href: "/dashboard/search" },
+            { icon: "🧬", title: "ESM-2 Similarity Search", desc: "Find evolutionarily related resistance proteins using protein language model embeddings.", href: "/dashboard" },
+            { icon: "📊", title: "Druggability Dashboard", desc: "Browse 2,433 proteins with fpocket scores and XGBoost ML druggability predictions.", href: "/dashboard" },
+            { icon: "🔬", title: "3D Protein Viewer", desc: "Interactive 3D AlphaFold structures with secondary-structure colouring. Powered by 3Dmol.js.", href: "/dashboard" },
+            { icon: "📧", title: "Email Reports", desc: "Send full analysis reports — druggability scores, ML predictions, and cited literature — to your inbox.", href: "/dashboard/report" },
           ].map((f) => (
             <Link key={f.title} href={f.href} className="p-6 border border-stone-200 bg-white rounded-xl hover:border-emerald-300 hover:shadow-sm transition block">
               <div className="text-3xl mb-4">{f.icon}</div>
