@@ -130,8 +130,7 @@ export default function Home() {
           {[
             { icon: "🧪", title: "Analyse Your Protein", desc: "Enter any UniProt ID for on-demand druggability analysis, ESM-2 similarity search, and ML prediction.", href: "/dashboard/analyse" },
             { icon: "🤖", title: "AI Research Assistant", desc: "Ask questions grounded in 2,508 PubMed articles via RAG + Llama 3.3, with PMID-cited answers.", href: "/dashboard/search" },
-            { icon: "🧬", title: "ESM-2 Similarity Search", desc: "Find evolutionarily related resistance proteins using protein language model embeddings.", href: "/dashboard" },
-            { icon: "📊", title: "Druggability Dashboard", desc: "Browse 2,433 proteins with fpocket scores and XGBoost ML druggability predictions.", href: "/dashboard" },
+            { icon: "📊", title: "Druggability Dashboard", desc: "Browse 2,433 proteins with fpocket scores, XGBoost ML predictions, and ESM-2 similarity search.", href: "/dashboard" },
             { icon: "🔬", title: "3D Protein Viewer", desc: "Interactive 3D AlphaFold structures with secondary-structure colouring. Powered by 3Dmol.js.", href: "/dashboard" },
             { icon: "📧", title: "Email Reports", desc: "Send full analysis reports — druggability scores, ML predictions, and cited literature — to your inbox.", href: "/dashboard/report" },
           ].map((f) => (
