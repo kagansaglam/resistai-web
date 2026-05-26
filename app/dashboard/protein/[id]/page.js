@@ -76,10 +76,10 @@ export default function ProteinDetail() {
         .catch(() => { el.innerHTML = '<p style="padding:20px;color:#999;font-size:12px">No AlphaFold structure available for this protein.</p>' })
     }
     if (!window.$3Dmol) {
-      script.onload = render
+      script.onload = () => setTimeout(render, 100)
       document.head.appendChild(script)
     } else {
-      render()
+      setTimeout(render, 100)
     }
   }, [show3D, protein])
 
