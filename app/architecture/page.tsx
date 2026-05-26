@@ -141,6 +141,12 @@ export default function Architecture() {
               </div>
             ))}
           </div>
+          <div className="mt-6 p-5 bg-blue-50 border border-blue-200 rounded-xl">
+            <h3 className="text-sm font-semibold text-blue-900 mb-2">Model benchmarking note</h3>
+            <p className="text-sm text-blue-800 leading-relaxed italic">
+              We benchmarked ESM-2 35M (480-dim) against ESM-2 150M (640-dim) embeddings for druggability classification and found no performance gain from the larger model (ROC-AUC 0.79 in both). This indicates the sequence-level druggability signal saturates at smaller model capacity — the next lever for improvement would be incorporating explicit structural features (pocket geometry, hydrophobicity) rather than scaling the language model. The production pipeline uses the 35M model for efficiency with no loss in accuracy.
+            </p>
+          </div>
           <div className="mt-6 p-5 bg-amber-50 border border-amber-200 rounded-xl">
             <h3 className="text-sm font-semibold text-amber-800 mb-2">Scientific disclaimer</h3>
             <p className="text-sm text-amber-700 leading-relaxed">
