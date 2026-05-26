@@ -16,52 +16,77 @@ export default function ProteinDetail() {
   const [similarLoading, setSimilarLoading] = useState(false)
   const [mlPrediction, setMlPrediction] = useState(null)
   const [userEmail, setUserEmail] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [emailSending, setEmailSending] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
+  const [show3D, setShow3D] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
     async function init() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/auth/login'); return }
-      setUserEmail(user.email || '')
+      if (user) {
+        setIsLoggedIn(true)
+        setUserEmail(user.email || '')
+      }
       const r = await fetch(`${API_URL}/proteins/${id}`)
       if (r.ok) {
         const data = await r.json()
         setProtein(data)
-        // Fetch similar proteins
         setSimilarLoading(true)
         try {
           const sr = await fetch(`${API_URL}/similar-proteins/${id}?n=6`)
-          if (sr.ok) {
-            const sd = await sr.json()
-            setSimilar(sd.results || [])
-          }
+          if (sr.ok) { const sd = await sr.json(); setSimilar(sd.results || []) }
         } catch (e) {}
         setSimilarLoading(false)
       }
-      // Fetch ML prediction
       try {
         const mlR = await fetch(`${API_URL}/predict-druggability`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ uniprot_id: id })
         })
-        if (mlR.ok) {
-          const mlData = await mlR.json()
-          setMlPrediction(mlData)
-        }
+        if (mlR.ok) { const mlData = await mlR.json(); setMlPrediction(mlData) }
       } catch (e) {}
       setLoading(false)
     }
     init()
   }, [id])
 
+  // 3D viewer
+  useEffect(() => {
+    if (!show3D || !protein) return
+    const script = document.createElement('script')
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.1.0/3Dmol-min.js'
+    const render = () => {
+      const el = document.getElementById('protein-viewer')
+      if (!el) return
+      el.innerHTML = ''
+      const viewer = window.$3Dmol.createViewer(el, { backgroundColor: '#f5f0eb' })
+      const afUrl = `https://alphafold.ebi.ac.uk/files/AF-${protein.uniprot_id}-F1-model_v6.pdb`
+      fetch(afUrl)
+        .then(r => r.text())
+        .then(pdb => {
+          viewer.addModel(pdb, 'pdb')
+          viewer.setStyle({}, { cartoon: { colorscheme: { prop: 'ss', map: { h: '#4F46E5', s: '#7C3AED', loop: '#6D28D9' } } } })
+          viewer.zoomTo()
+          viewer.render()
+        })
+        .catch(() => { el.innerHTML = '<p style="padding:20px;color:#999;font-size:12px">No AlphaFold structure available for this protein.</p>' })
+    }
+    if (!window.$3Dmol) {
+      script.onload = render
+      document.head.appendChild(script)
+    } else {
+      render()
+    }
+  }, [show3D, protein])
+
   async function saveProtein() {
     setSaving(true)
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { router.push('/auth/login'); return }
+    if (!user) { router.push('/auth/signup'); return }
     await supabase.from('saved_proteins').upsert({
       user_id: user.id,
       uniprot_id: protein.uniprot_id,
@@ -119,7 +144,7 @@ export default function ProteinDetail() {
           <Link href="/" className="hover:text-gray-900 transition">Home</Link>
           <Link href="/dashboard" className="hover:text-gray-900 transition">Proteins</Link>
           <Link href="/dashboard/search" className="hover:text-gray-900 transition">Literature</Link>
-          <Link href="/dashboard/results" className="hover:text-gray-900 transition">My Results</Link>
+          {isLoggedIn && <Link href="/dashboard/results" className="hover:text-gray-900 transition">My Results</Link>}
         </div>
       </nav>
 
@@ -154,6 +179,31 @@ export default function ProteinDetail() {
           </div>
         </div>
 
+        {/* 3D Viewer */}
+        <div className="bg-white rounded-xl border border-stone-200 p-8 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <h2 className="font-semibold text-gray-900">3D Structure</h2>
+              <span className="text-xs text-gray-400 bg-stone-50 px-2 py-0.5 rounded-full border border-stone-200">AlphaFold · 3Dmol.js</span>
+            </div>
+            {isLoggedIn ? (
+              <button onClick={() => setShow3D(!show3D)} className="text-xs px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition">
+                {show3D ? 'Hide 3D' : 'View 3D'}
+              </button>
+            ) : (
+              <button disabled className="text-xs px-3 py-1.5 bg-stone-100 text-gray-400 rounded-lg cursor-not-allowed">🔒 View 3D</button>
+            )}
+          </div>
+          {show3D && isLoggedIn ? (
+            <div>
+              <p className="text-xs text-gray-400 mb-3">drag to rotate · scroll to zoom</p>
+              <div id="protein-viewer" style={{ width: '100%', height: '400px', background: '#f5f0eb', borderRadius: '8px' }} />
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400">{isLoggedIn ? 'Click "View 3D" to load the AlphaFold structure.' : 'Sign up to view the interactive 3D protein structure.'}</p>
+          )}
+        </div>
+
         {/* ML Prediction */}
         {mlPrediction && (
           <div className="bg-white rounded-xl border border-stone-200 p-8 mb-6">
@@ -174,8 +224,8 @@ export default function ProteinDetail() {
               </div>
               <div className="bg-stone-50 rounded-lg p-4 text-center">
                 <div className="text-xs text-gray-500 mt-2 leading-relaxed">
-                  H: {(mlPrediction.probabilities?.high * 100).toFixed(0)}% · 
-                  M: {(mlPrediction.probabilities?.medium * 100).toFixed(0)}% · 
+                  H: {(mlPrediction.probabilities?.high * 100).toFixed(0)}% ·
+                  M: {(mlPrediction.probabilities?.medium * 100).toFixed(0)}% ·
                   L: {(mlPrediction.probabilities?.low * 100).toFixed(0)}%
                 </div>
                 <div className="text-xs text-gray-400 mt-1">Probabilities</div>
@@ -254,21 +304,43 @@ export default function ProteinDetail() {
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3 flex-wrap">
+        <div className="flex gap-3 flex-wrap items-center">
           <a href={`https://www.uniprot.org/uniprot/${protein.uniprot_id}`} target="_blank" rel="noreferrer" className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition">UniProt</a>
           <a href={`https://alphafold.ebi.ac.uk/entry/${protein.uniprot_id}`} target="_blank" rel="noreferrer" className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">AlphaFold</a>
           <Link href={`/dashboard/search?q=${encodeURIComponent(protein.gene)}`} className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">Search Literature</Link>
-          <button onClick={saveProtein} disabled={saving || saved} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm rounded-lg transition">
-            {saved ? 'Saved!' : saving ? 'Saving...' : 'Save to Results'}
-          </button>
-          {emailSent ? (
-            <span className="px-4 py-2 text-sm text-emerald-600 font-medium">✓ Report sent!</span>
+
+          {isLoggedIn ? (
+            <>
+              <button onClick={saveProtein} disabled={saving || saved} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm rounded-lg transition">
+                {saved ? 'Saved!' : saving ? 'Saving...' : 'Save to Results'}
+              </button>
+              {emailSent ? (
+                <span className="px-4 py-2 text-sm text-emerald-600 font-medium">✓ Report sent!</span>
+              ) : (
+                <button onClick={handleEmailReport} disabled={emailSending} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm rounded-lg transition">
+                  {emailSending ? 'Sending...' : '📧 Email Report'}
+                </button>
+              )}
+            </>
           ) : (
-            <button onClick={handleEmailReport} disabled={emailSending} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm rounded-lg transition">
-              {emailSending ? 'Sending...' : '📧 Email Report'}
-            </button>
+            <>
+              <button disabled className="px-4 py-2 bg-stone-100 text-gray-400 text-sm rounded-lg cursor-not-allowed">🔒 Save to Results</button>
+              <button disabled className="px-4 py-2 bg-stone-100 text-gray-400 text-sm rounded-lg cursor-not-allowed">🔒 Email Report</button>
+            </>
           )}
         </div>
+
+        {/* Sign-up prompt */}
+        {!isLoggedIn && (
+          <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-xl p-5 flex items-center justify-between">
+            <p className="text-sm text-emerald-800">
+              <strong>Sign up free</strong> to save proteins, view 3D structures, and email analysis reports.
+            </p>
+            <Link href="/auth/signup" className="shrink-0 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition">
+              Sign up →
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )
