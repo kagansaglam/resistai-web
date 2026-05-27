@@ -11,7 +11,7 @@ export default function Architecture() {
           <Link href="/" className="hover:text-gray-900 transition">Home</Link>
           <Link href="/dashboard" className="hover:text-gray-900 transition">Dashboard</Link>
           <Link href="/dashboard/search" className="hover:text-gray-900 transition">Literature</Link>
-          <a href="https://github.com/kagansaglam/resistai" target="_blank" className="hover:text-gray-900 transition">GitHub</a>
+          <a href="https://github.com/kagansaglam/resistai" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition">GitHub</a>
         </div>
       </nav>
 

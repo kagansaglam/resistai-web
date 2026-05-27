@@ -53,7 +53,9 @@ export default function AnalysePage() {
       try {
         const sr = await fetch(`${API_URL}/similar-proteins/${uid}?n=5`)
         if (sr.ok) { const sd = await sr.json(); setSimilar(sd.results || []) }
-      } catch (e) {}
+      } catch (e) {
+        console.error('Similar proteins fetch failed:', e)
+      }
 
       // 3. ML prediction
       try {
@@ -63,7 +65,9 @@ export default function AnalysePage() {
           body: JSON.stringify({ uniprot_id: uid })
         })
         if (mlR.ok) { const mlData = await mlR.json(); setMlPrediction(mlData) }
-      } catch (e) {}
+      } catch (e) {
+        console.error('ML prediction failed:', e)
+      }
 
       // 4. AI literature
       setAiLoading(true)
@@ -84,7 +88,9 @@ export default function AnalysePage() {
             if (askR.ok) { const askData = await askR.json(); setAiAnswer(askData.answer || '') }
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        console.error('AI literature search failed:', e)
+      }
       setAiLoading(false)
 
     } catch (e) {

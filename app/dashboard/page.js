@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [fetchError, setFetchError] = useState('')
   const [search, setSearch] = useState('')
   const [tier, setTier] = useState('')
   const [offset, setOffset] = useState(0)
@@ -36,7 +37,9 @@ export default function Dashboard() {
       const r = await fetch(`${API_URL}/stats`)
       const data = await r.json()
       setStats(data)
-    } catch (e) {}
+    } catch (e) {
+      console.error('Failed to fetch stats:', e)
+    }
   }
 
   async function fetchProteins(tierFilter = '', newOffset = 0) {
@@ -44,6 +47,7 @@ export default function Dashboard() {
       let url = `${API_URL}/proteins?limit=${PAGE_SIZE}&offset=${newOffset}`
       if (tierFilter) url += `&tier=${tierFilter}`
       const r = await fetch(url)
+      if (!r.ok) throw new Error(`API error: ${r.status}`)
       const data = await r.json()
       if (newOffset === 0) {
         setProteins(data)
@@ -52,7 +56,10 @@ export default function Dashboard() {
       }
       setHasMore(data.length === PAGE_SIZE)
       setOffset(newOffset + data.length)
-    } catch (e) {}
+    } catch (e) {
+      console.error('Failed to fetch proteins:', e)
+      setFetchError('Could not load proteins. Please refresh the page.')
+    }
   }
 
   async function handleLoadMore() {
@@ -156,6 +163,11 @@ export default function Dashboard() {
           </select>
         </div>
 
+        {fetchError && (
+          <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg">
+            {fetchError}
+          </div>
+        )}
         <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
             <h2 className="font-semibold text-gray-900">Resistance Proteins</h2>

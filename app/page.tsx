@@ -15,9 +15,9 @@ export default function Home() {
           <a href="#how-it-works" className="hover:text-gray-900 transition">How it works</a>
           <a href="#features" className="hover:text-gray-900 transition">Features</a>
           <Link href="/architecture" className="hover:text-gray-900 transition">Architecture</Link>
-          <Link href="/case-study/vim2" className="hover:text-gray-900 transition">VIM-7</Link>
+          <Link href="/case-study/vim7" className="hover:text-gray-900 transition">VIM-7</Link>
           <Link href="/case-study/inha" className="hover:text-gray-900 transition">InhA</Link>
-          <a href="https://github.com/kagansaglam/resistai" target="_blank" className="hover:text-gray-900 transition">GitHub</a>
+          <a href="https://github.com/kagansaglam/resistai" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition">GitHub</a>
         </div>
         <div className="flex gap-3">
           <Link href="/auth/login" className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 hover:border-gray-400 rounded-lg transition">Sign in</Link>
@@ -61,7 +61,7 @@ export default function Home() {
             { value: "2,433", label: "Proteins analysed" },
             { value: "1,198", label: "High druggability" },
             { value: "2,508", label: "PubMed articles" },
-            { value: "1.000", label: "Best score" },
+            { value: "1.00", label: "Best score" },
           ].map((stat) => (
             <div key={stat.label}>
               <div className="text-3xl font-bold text-emerald-600">{stat.value}</div>
@@ -70,7 +70,7 @@ export default function Home() {
           ))}
         </div>
       </section>
-      {/* Why ResistAI section */}
+      {/* Why ResistAI section */}
       <section id="why-resistai" className="px-8 py-24 bg-white border-y border-stone-200">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">

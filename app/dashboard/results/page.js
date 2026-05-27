@@ -94,7 +94,9 @@ export default function Results() {
         })
       })
       setEmailSent(prev => ({ ...prev, [protein.id]: true }))
-    } catch (e) {}
+    } catch (e) {
+      console.error('Email send failed:', e)
+    }
     setEmailSending(null)
   }
 
@@ -118,7 +120,9 @@ export default function Results() {
         })
       })
       setAllEmailSent(true)
-    } catch (e) {}
+    } catch (e) {
+      console.error('Bulk email send failed:', e)
+    }
     setAllEmailSending(false)
   }
 
