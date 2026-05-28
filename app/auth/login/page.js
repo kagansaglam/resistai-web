@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import Image from 'next/image'
 import { createClient } from '../../../lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -29,7 +30,7 @@ export default function Login() {
     <main className="min-h-screen bg-stone-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <img src="/logo.png" alt="ResistAI" className="h-12 w-auto mx-auto" />
+          <Image src="/logo.png" alt="ResistAI" width={160} height={40} className="h-12 w-auto mx-auto" style={{width: "auto"}} />
           <h1 className="text-2xl font-bold text-gray-900 mt-3">Sign in to ResistAI</h1>
           <p className="text-gray-500 mt-1 text-sm">Antibiotic resistance research platform</p>
         </div>

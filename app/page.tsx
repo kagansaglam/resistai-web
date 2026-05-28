@@ -1,29 +1,12 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import HeroViewer from '../components/HeroViewer'
 import HowItWorks from '../components/HowItWorks'
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-stone-50 text-gray-900">
-      <nav className="border-b border-stone-200 px-8 py-4 flex items-center justify-between bg-white">
-        <Link href="/" className="flex items-center gap-2">
-          <img src="/logo.png" alt="ResistAI" className="h-10 w-auto" />
-        </Link>
-        <div className="flex gap-6 text-sm text-gray-500">
-          <a href="#why-resistai" className="hover:text-gray-900 transition">Why ResistAI</a>
-          <Link href="/dashboard/analyse" className="hover:text-gray-900 transition">Analyse</Link>
-          <a href="#how-it-works" className="hover:text-gray-900 transition">How it works</a>
-          <a href="#features" className="hover:text-gray-900 transition">Features</a>
-          <Link href="/architecture" className="hover:text-gray-900 transition">Architecture</Link>
-          <Link href="/case-study/vim7" className="hover:text-gray-900 transition">VIM-7</Link>
-          <Link href="/case-study/inha" className="hover:text-gray-900 transition">InhA</Link>
-          <a href="https://github.com/kagansaglam/resistai" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition">GitHub</a>
-        </div>
-        <div className="flex gap-3">
-          <Link href="/auth/login" className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 hover:border-gray-400 rounded-lg transition">Sign in</Link>
-          <Link href="/auth/signup" className="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition font-medium">Sign up</Link>
-        </div>
-      </nav>
+      <Navbar />
 
       <section className="px-8 py-20 text-center max-w-5xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3 py-1 text-xs bg-red-50 text-red-600 rounded-full mb-6 border border-red-200">
@@ -150,8 +133,35 @@ export default function Home() {
         <Link href="/auth/signup" className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition inline-block">Create free account &rarr;</Link>
       </section>
 
-      <footer className="border-t border-stone-200 px-8 py-8 text-center text-sm text-gray-400 bg-white">
-        <p>ResistAI &mdash; Kagan Saglam &middot; MIT License &middot; <a href="https://github.com/kagansaglam/resistai" target="_blank" rel="noreferrer" className="hover:text-gray-700 transition">GitHub</a> &middot; <a href="https://doi.org/10.5281/zenodo.19697274" target="_blank" rel="noreferrer" className="hover:text-gray-700 transition">DOI</a></p>
+      <footer className="border-t border-stone-200 bg-white">
+        <div className="max-w-5xl mx-auto px-8 py-10 grid grid-cols-3 gap-8 text-sm">
+          <div>
+            <p className="font-semibold text-gray-700 mb-1">ResistAI</p>
+            <p className="text-gray-400 text-xs leading-relaxed">AI-powered druggability analysis for antibiotic resistance proteins. Built on AlphaFold, ESM-2, fpocket, and RAG.</p>
+          </div>
+          <div>
+            <p className="font-semibold text-gray-700 mb-3">Platform</p>
+            <div className="flex flex-col gap-1.5 text-xs text-gray-400">
+              <Link href="/dashboard" className="hover:text-gray-700 transition">Protein dashboard</Link>
+              <Link href="/dashboard/analyse" className="hover:text-gray-700 transition">Analyse a protein</Link>
+              <Link href="/dashboard/search" className="hover:text-gray-700 transition">Literature search</Link>
+              <Link href="/architecture" className="hover:text-gray-700 transition">Architecture</Link>
+            </div>
+          </div>
+          <div>
+            <p className="font-semibold text-gray-700 mb-3">Resources</p>
+            <div className="flex flex-col gap-1.5 text-xs text-gray-400">
+              <a href="https://github.com/kagansaglam/resistai" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 transition">GitHub ↗</a>
+              <a href="https://doi.org/10.5281/zenodo.19697274" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 transition">DOI / Citation ↗</a>
+              <a href="https://resistai-api.onrender.com/docs" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 transition">API docs ↗</a>
+              <Link href="/case-study/vim7" className="hover:text-gray-700 transition">Case study: VIM-7</Link>
+              <Link href="/case-study/inha" className="hover:text-gray-700 transition">Case study: InhA</Link>
+            </div>
+          </div>
+        </div>
+        <div className="border-t border-stone-100 px-8 py-4 text-center text-xs text-gray-400">
+          ResistAI &mdash; Kagan Saglam &middot; MIT License
+        </div>
       </footer>
     </main>
   )

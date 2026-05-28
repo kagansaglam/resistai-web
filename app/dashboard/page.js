@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { createClient } from '../../lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -100,8 +101,39 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
-        <div className="text-gray-400 text-sm">Loading ResistAI...</div>
+      <div className="min-h-screen bg-stone-50">
+        <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
+          <div className="h-8 w-28 bg-stone-100 rounded-lg animate-pulse" />
+          <div className="flex gap-4">
+            {[80, 64, 72, 60].map(w => (
+              <div key={w} className="h-4 bg-stone-100 rounded animate-pulse" style={{ width: w }} />
+            ))}
+          </div>
+          <div className="h-8 w-20 bg-stone-100 rounded-lg animate-pulse" />
+        </nav>
+        <div className="px-8 py-6 max-w-7xl mx-auto">
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="bg-white border border-stone-200 rounded-xl p-4">
+                <div className="h-3 w-20 bg-stone-100 rounded animate-pulse mb-3" />
+                <div className="h-7 w-16 bg-stone-100 rounded animate-pulse" />
+              </div>
+            ))}
+          </div>
+          <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-stone-100">
+              <div className="h-4 w-40 bg-stone-100 rounded animate-pulse" />
+            </div>
+            {[1,2,3,4,5,6,7,8].map(i => (
+              <div key={i} className="px-6 py-4 border-b border-stone-100 flex gap-6 items-center">
+                <div className="h-3 w-20 bg-stone-100 rounded animate-pulse" />
+                <div className="h-3 w-36 bg-stone-100 rounded animate-pulse" />
+                <div className="h-3 w-28 bg-stone-100 rounded animate-pulse" />
+                <div className="h-5 w-14 bg-stone-100 rounded-full animate-pulse ml-auto" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     )
   }
@@ -111,7 +143,7 @@ export default function Dashboard() {
       <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="ResistAI" className="h-8 w-auto" />
+            <Image src="/logo.png" alt="ResistAI" width={160} height={40} className="h-8 w-auto" style={{width: "auto"}} />
           </Link>
           <div className="flex gap-4 text-sm text-gray-500">
             <Link href="/" className="hover:text-gray-900 transition">Home</Link>

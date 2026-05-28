@@ -1,11 +1,12 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Architecture() {
   return (
     <main className="min-h-screen bg-stone-50 text-gray-900">
       <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/logo.png" alt="ResistAI" className="h-8 w-auto" />
+          <Image src="/logo.png" alt="ResistAI" width={160} height={40} className="h-8 w-auto" style={{width: "auto"}} />
         </Link>
         <div className="flex gap-4 text-sm text-gray-500">
           <Link href="/" className="hover:text-gray-900 transition">Home</Link>
