@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import HeroViewer from '../components/HeroViewer'
 import HowItWorks from '../components/HowItWorks'
+import Navbar from '../components/Navbar'
 
 export default function Home() {
   return (
