@@ -280,9 +280,9 @@ export default function AnalysePage() {
 
             {/* Links */}
             <div className="flex gap-3 flex-wrap">
-              <a href={`https://www.uniprot.org/uniprot/${result.uniprot_id}`} target="_blank" rel="noreferrer"
+              <a href={`https://www.uniprot.org/uniprot/${result.uniprot_id}`} target="_blank" rel="noopener noreferrer"
                 className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition">UniProt →</a>
-              <a href={`https://alphafold.ebi.ac.uk/entry/${result.uniprot_id}`} target="_blank" rel="noreferrer"
+              <a href={`https://alphafold.ebi.ac.uk/entry/${result.uniprot_id}`} target="_blank" rel="noopener noreferrer"
                 className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">AlphaFold →</a>
               <Link href={`/dashboard/search?q=${result.uniprot_id}`}
                 className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">Search literature →</Link>

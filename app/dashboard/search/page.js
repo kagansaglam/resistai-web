@@ -225,7 +225,7 @@ export default function LiteratureSearch() {
                     <span className="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
                       {a.relevance_score?.toFixed(3)}
                     </span>
-                    <a href={a.pubmed_url} target="_blank" rel="noreferrer" className="text-xs text-gray-400 hover:text-emerald-600 transition underline">PMID:{a.pmid}</a>
+                    <a href={a.pubmed_url} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-emerald-600 transition underline">PMID:{a.pmid}</a>
                   </div>
                 </div>
               </div>

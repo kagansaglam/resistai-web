@@ -171,7 +171,7 @@ export default function Architecture() {
                   <p className="text-sm font-medium text-gray-900">{d.name}</p>
                   <p className="text-xs text-gray-400 mt-0.5">{d.scope}</p>
                 </div>
-                <a href={`https://${d.source}`} target="_blank" rel="noreferrer" className="text-xs text-emerald-600 hover:underline shrink-0">{d.source}</a>
+                <a href={`https://${d.source}`} target="_blank" rel="noopener noreferrer" className="text-xs text-emerald-600 hover:underline shrink-0">{d.source}</a>
               </div>
             ))}
           </div>
@@ -179,8 +179,8 @@ export default function Architecture() {
 
         {/* Links */}
         <div className="flex gap-4">
-          <a href="https://github.com/kagansaglam/resistai" target="_blank" rel="noreferrer" className="px-5 py-2.5 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition">View on GitHub →</a>
-          <a href="https://resistai-api.onrender.com/docs" target="_blank" rel="noreferrer" className="px-5 py-2.5 border border-stone-200 hover:border-emerald-300 text-gray-700 hover:text-emerald-600 text-sm font-medium rounded-lg transition">API docs →</a>
+          <a href="https://github.com/kagansaglam/resistai" target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition">View on GitHub →</a>
+          <a href="https://resistai-api.onrender.com/docs" target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 border border-stone-200 hover:border-emerald-300 text-gray-700 hover:text-emerald-600 text-sm font-medium rounded-lg transition">API docs →</a>
           <Link href="/dashboard" className="px-5 py-2.5 border border-stone-200 hover:border-emerald-300 text-gray-700 hover:text-emerald-600 text-sm font-medium rounded-lg transition">Open dashboard →</Link>
           <Link href="/case-study/vim2" className="px-5 py-2.5 border border-stone-200 hover:border-emerald-300 text-gray-700 hover:text-emerald-600 text-sm font-medium rounded-lg transition">VIM-7 case study →</Link>
         </div>

@@ -38,7 +38,9 @@ export default function ProteinDetail() {
         try {
           const sr = await fetch(`${API_URL}/similar-proteins/${id}?n=6`)
           if (sr.ok) { const sd = await sr.json(); setSimilar(sd.results || []) }
-        } catch (e) {}
+        } catch (e) {
+          console.error('Similar proteins fetch failed:', e)
+        }
         setSimilarLoading(false)
       }
       try {
@@ -48,7 +50,9 @@ export default function ProteinDetail() {
           body: JSON.stringify({ uniprot_id: id })
         })
         if (mlR.ok) { const mlData = await mlR.json(); setMlPrediction(mlData) }
-      } catch (e) {}
+      } catch (e) {
+        console.error('ML prediction failed:', e)
+      }
       setLoading(false)
     }
     init()
@@ -116,7 +120,9 @@ export default function ProteinDetail() {
         })
       })
       setEmailSent(true)
-    } catch (e) {}
+    } catch (e) {
+      console.error('Email send failed:', e)
+    }
     setEmailSending(false)
   }
 
@@ -281,8 +287,8 @@ export default function ProteinDetail() {
 
         {/* Actions */}
         <div className="flex gap-3 flex-wrap items-center">
-          <a href={`https://www.uniprot.org/uniprot/${protein.uniprot_id}`} target="_blank" rel="noreferrer" className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition">UniProt</a>
-          <a href={`https://alphafold.ebi.ac.uk/entry/${protein.uniprot_id}`} target="_blank" rel="noreferrer" className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">AlphaFold</a>
+          <a href={`https://www.uniprot.org/uniprot/${protein.uniprot_id}`} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition">UniProt</a>
+          <a href={`https://alphafold.ebi.ac.uk/entry/${protein.uniprot_id}`} target="_blank" rel="noopener noreferrer" className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">AlphaFold</a>
           <Link href={`/dashboard/search?q=${encodeURIComponent(protein.gene)}`} className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">Search Literature</Link>
 
           {isLoggedIn ? (

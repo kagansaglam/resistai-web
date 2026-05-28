@@ -151,7 +151,7 @@ export default function VIM2CaseStudy() {
           <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-6">Relevant resistance literature</h2>
           <div className="space-y-3">
             {articles.map(a => (
-              <a key={a.pmid} href={`https://pubmed.ncbi.nlm.nih.gov/${a.pmid}`} target="_blank" rel="noreferrer"
+              <a key={a.pmid} href={`https://pubmed.ncbi.nlm.nih.gov/${a.pmid}`} target="_blank" rel="noopener noreferrer"
                 className="flex items-start gap-4 py-3 px-4 rounded-lg border border-stone-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-900 leading-snug">{a.title}</p>
