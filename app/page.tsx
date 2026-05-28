@@ -45,7 +45,7 @@ export default function Home() {
             { value: "2,433", label: "Proteins analysed" },
             { value: "1,198", label: "High druggability" },
             { value: "2,508", label: "PubMed articles" },
-            { value: "1.00", label: "Best score" },
+            { value: "1.000", label: "Best score" },
           ].map((stat) => (
             <div key={stat.label}>
               <div className="text-3xl font-bold text-emerald-600">{stat.value}</div>
