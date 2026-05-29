@@ -15,6 +15,8 @@ export default function LiteratureSearch() {
   const [aiLoading, setAiLoading] = useState(false)
   const [userEmail, setUserEmail] = useState('')
   const [userName, setUserName] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [authChecked, setAuthChecked] = useState(false)
   const [emailSending, setEmailSending] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const router = useRouter()
@@ -53,10 +55,13 @@ export default function LiteratureSearch() {
 
   useEffect(() => {
     async function init() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/auth/login'); return }
-      setUserEmail(user.email || '')
-      setUserName(user.user_metadata?.full_name || user.email?.split('@')[0] || 'Researcher')
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
+        setIsLoggedIn(true)
+        setUserEmail(session.user.email || '')
+        setUserName(session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Researcher')
+      }
+      setAuthChecked(true)
       const params = new URLSearchParams(window.location.search)
       const q = params.get('q')
       if (q) {
@@ -67,6 +72,15 @@ export default function LiteratureSearch() {
     init()
   }, [])
 
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session?.user)
+      setUserEmail(session?.user?.email || '')
+      setUserName(session?.user?.user_metadata?.full_name || session?.user?.email?.split('@')[0] || 'Researcher')
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
   async function handleSearch(e) {
     e.preventDefault()
     if (!query.trim()) return
@@ -74,6 +88,7 @@ export default function LiteratureSearch() {
   }
 
   async function handleEmailReport() {
+    if (!isLoggedIn) { router.push('/auth/signup'); return }
     if (!userEmail || !aiAnswer || results.length === 0) return
     setEmailSending(true)
     try {
@@ -108,25 +123,25 @@ export default function LiteratureSearch() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2">
+      <nav className="bg-white border-b border-stone-200 px-4 sm:px-8 py-3 flex items-center justify-between overflow-x-auto">
+        <div className="flex items-center gap-3 sm:gap-6 shrink-0">
+          <Link href="/" className="flex items-center gap-2 shrink-0">
             <img src="/logo.png" alt="ResistAI" className="h-8 w-auto" />
           </Link>
-          <div className="flex gap-4 text-sm text-gray-500">
+          <div className="flex gap-3 sm:gap-4 text-sm text-gray-500 shrink-0 whitespace-nowrap">
             <Link href="/" className="hover:text-gray-900 transition">Home</Link>
             <Link href="/dashboard" className="hover:text-gray-900 transition">Proteins</Link>
             <Link href="/dashboard/search" className="text-emerald-600 font-medium">Literature</Link>
-            <Link href="/dashboard/results" className="hover:text-gray-900 transition">My Results</Link>
+            {isLoggedIn && <Link href="/dashboard/results" className="hover:text-gray-900 transition">My Results</Link>}
           </div>
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-8 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-8 py-8 sm:py-12">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Literature Search</h1>
         <p className="text-gray-500 text-sm mb-8">Search across 2,508 indexed PubMed articles on antibiotic resistance</p>
 
-        <form onSubmit={handleSearch} className="flex gap-3 mb-6">
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 mb-6">
           <input
             type="text"
             value={query}
@@ -137,7 +152,7 @@ export default function LiteratureSearch() {
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition"
+            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition shrink-0"
           >
             {loading ? 'Searching...' : 'Search'}
           </button>
@@ -170,8 +185,8 @@ export default function LiteratureSearch() {
         )}
 
         {aiAnswer && (
-          <div className="bg-white border border-emerald-200 rounded-xl p-6 mb-6">
-            <div className="flex items-center gap-2 mb-3">
+          <div className="bg-white border border-emerald-200 rounded-xl p-5 sm:p-6 mb-6">
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
               <span className="text-lg">🤖</span>
               <h3 className="font-semibold text-gray-900 text-sm">AI Research Assistant</h3>
               <span className="text-xs text-gray-400 ml-auto">Powered by Llama 3.3</span>
@@ -179,19 +194,27 @@ export default function LiteratureSearch() {
             <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{aiAnswer}</p>
 
             {/* Email Report Button */}
-            <div className="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between">
-              <p className="text-xs text-gray-400">
-                Report will be sent to <span className="font-medium text-gray-600">{userEmail}</span>
-              </p>
+            <div className="mt-4 pt-4 border-t border-stone-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              {authChecked && isLoggedIn ? (
+                <p className="text-xs text-gray-400">
+                  Report will be sent to <span className="font-medium text-gray-600">{userEmail}</span>
+                </p>
+              ) : (
+                <p className="text-xs text-gray-400">
+                  Sign up free to email this report to yourself
+                </p>
+              )}
               {emailSent ? (
                 <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
                   ✓ Report sent to your email
                 </span>
-              ) : (
+              ) : !authChecked ? (
+                <div className="h-8 w-32 bg-stone-100 rounded-lg animate-pulse" />
+              ) : isLoggedIn ? (
                 <button
                   onClick={handleEmailReport}
                   disabled={emailSending}
-                  className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition"
+                  className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition shrink-0"
                 >
                   {emailSending ? (
                     <>
@@ -201,6 +224,13 @@ export default function LiteratureSearch() {
                   ) : (
                     <>📧 Email Report</>
                   )}
+                </button>
+              ) : (
+                <button
+                  onClick={() => router.push('/auth/signup')}
+                  className="flex items-center gap-2 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-gray-500 text-xs font-medium rounded-lg transition shrink-0"
+                >
+                  🔒 Email Report
                 </button>
               )}
             </div>
@@ -217,7 +247,7 @@ export default function LiteratureSearch() {
             {results.map(a => (
               <div key={a.pmid} className="bg-white border border-stone-200 rounded-xl p-5 hover:border-emerald-200 transition">
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 leading-snug">{a.title}</p>
                     <p className="text-xs text-gray-400 mt-1">{a.journal} · {a.year}</p>
                   </div>
