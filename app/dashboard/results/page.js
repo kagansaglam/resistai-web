@@ -9,8 +9,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 export default function Results() {
   const [proteins, setProteins] = useState([])
   const [loading, setLoading] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [selected, setSelected] = useState(null)
-  const [notes, setNotes] = useState({})
   const [savingNote, setSavingNote] = useState(null)
   const [userEmail, setUserEmail] = useState('')
   const [emailSending, setEmailSending] = useState(null)
@@ -29,9 +30,15 @@ export default function Results() {
 
   useEffect(() => {
     async function fetchResults() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/auth/login'); return }
-      setUserEmail(user.email || '')
+      const { data: { session } } = await supabase.auth.getSession()
+      setAuthChecked(true)
+      if (!session?.user) {
+        setIsLoggedIn(false)
+        setLoading(false)
+        return
+      }
+      setIsLoggedIn(true)
+      setUserEmail(session.user.email || '')
       const { data } = await supabase
         .from('saved_proteins')
         .select('*')
@@ -139,12 +146,12 @@ export default function Results() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2">
+      <nav className="bg-white border-b border-stone-200 px-4 sm:px-8 py-3 flex items-center justify-between overflow-x-auto">
+        <div className="flex items-center gap-3 sm:gap-6 shrink-0">
+          <Link href="/" className="flex items-center gap-2 shrink-0">
             <img src="/logo.png" alt="ResistAI" className="h-8 w-auto" />
           </Link>
-          <div className="flex gap-4 text-sm text-gray-500">
+          <div className="flex gap-3 sm:gap-4 text-sm text-gray-500 shrink-0 whitespace-nowrap">
             <Link href="/" className="hover:text-gray-900 transition">Home</Link>
             <Link href="/dashboard" className="hover:text-gray-900 transition">Proteins</Link>
             <Link href="/dashboard/search" className="hover:text-gray-900 transition">Literature</Link>
@@ -153,104 +160,120 @@ export default function Results() {
         </div>
       </nav>
 
-      <div className="max-w-6xl mx-auto px-8 py-10">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">My Results</h1>
-            <p className="text-gray-500 text-sm">Saved proteins for further analysis</p>
-          </div>
-          {proteins.length > 0 && (
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-gray-400">{proteins.length} proteins saved</span>
-              {allEmailSent ? (
-                <span className="text-xs text-emerald-600 font-medium">✓ Report sent!</span>
-              ) : (
-                <button
-                  onClick={sendAllEmailReport}
-                  disabled={allEmailSending}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition"
-                >
-                  {allEmailSending ? 'Sending...' : '📧 Email all results'}
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {loading && <div className="text-gray-400 text-sm">Loading...</div>}
-
-        {!loading && proteins.length === 0 && (
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-10">
+        {/* Not logged in */}
+        {authChecked && !isLoggedIn && (
           <div className="text-center py-16 bg-white rounded-xl border border-stone-200">
-            <p className="text-gray-400 text-sm mb-4">No saved proteins yet.</p>
-            <Link href="/dashboard" className="text-emerald-600 hover:text-emerald-500 text-sm">Browse proteins &rarr;</Link>
+            <p className="text-gray-600 text-sm mb-2 font-medium">Sign in to view your saved results</p>
+            <p className="text-gray-400 text-sm mb-5">Save proteins from the dashboard to build your research list.</p>
+            <div className="flex gap-3 justify-center">
+              <Link href="/auth/login" className="px-5 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">Sign in</Link>
+              <Link href="/auth/signup" className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition">Sign up free</Link>
+            </div>
           </div>
         )}
 
-        {proteins.length > 0 && (
-          <div className="grid grid-cols-1 gap-4">
-            {proteins.map(p => (
-              <div key={p.id} className={`bg-white border rounded-xl transition ${selected?.id === p.id ? 'border-emerald-300 shadow-sm' : 'border-stone-200'}`}>
-                <div className="p-5 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div>
-                      <Link href={`/dashboard/protein/${p.uniprot_id}`} className="font-medium text-gray-900 hover:text-emerald-600 transition">{p.gene}</Link>
-                      <p className="text-xs text-gray-400 mt-0.5">{p.uniprot_id} · {p.organism}</p>
-                    </div>
-                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${tierColor(p.best_score)}`}>{tierLabel(p.best_score)}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-mono text-gray-900">{p.best_score?.toFixed(3)}</span>
-                    <button
-                      onClick={() => setSelected(selected?.id === p.id ? null : p)}
-                      className="text-xs px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition"
-                    >
-                      {selected?.id === p.id ? 'Hide 3D' : 'View 3D'}
-                    </button>
-                    <Link href={`/dashboard/search?q=${p.gene}`} className="text-xs px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition">
-                      Literature
-                    </Link>
-                    {emailSent[p.id] ? (
-                      <span className="text-xs text-emerald-600 font-medium">✓ Sent</span>
-                    ) : (
-                      <button
-                        onClick={() => sendEmailReport(p)}
-                        disabled={emailSending === p.id}
-                        className="text-xs px-3 py-1.5 bg-stone-50 hover:bg-stone-100 text-gray-600 rounded-lg transition border border-stone-200"
-                      >
-                        {emailSending === p.id ? '...' : '📧'}
-                      </button>
-                    )}
-                    <button
-                      onClick={() => removeProtein(p.id)}
-                      className="text-xs w-7 h-7 flex items-center justify-center text-red-400 hover:text-white hover:bg-red-500 rounded-lg transition border border-red-100 hover:border-red-500"
-                      title="Remove"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-                <div className="px-5 pb-4">
-                  <textarea
-                    defaultValue={p.notes || ''}
-                    onBlur={e => saveNote(p.id, e.target.value)}
-                    placeholder="Add notes about this protein..."
-                    className="w-full text-xs bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400 resize-none"
-                    rows={2}
-                  />
-                  {savingNote === p.id && <span className="text-xs text-gray-400">Saving...</span>}
-                </div>
-
-                {selected?.id === p.id && (
-                  <div className="border-t border-stone-100 p-4">
-                    <div className="flex gap-2 mb-3">
-                      <span className="text-xs text-gray-400">drag to rotate · scroll to zoom</span>
-                    </div>
-                    <div id="result-viewer" style={{ width: '100%', height: '380px', background: '#f5f0eb', borderRadius: '8px' }} />
-                  </div>
-                )}
+        {isLoggedIn && (
+          <>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-1">My Results</h1>
+                <p className="text-gray-500 text-sm">Saved proteins for further analysis</p>
               </div>
-            ))}
-          </div>
+              {proteins.length > 0 && (
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-gray-400">{proteins.length} proteins saved</span>
+                  {allEmailSent ? (
+                    <span className="text-xs text-emerald-600 font-medium">✓ Report sent!</span>
+                  ) : (
+                    <button
+                      onClick={sendAllEmailReport}
+                      disabled={allEmailSending}
+                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition"
+                    >
+                      {allEmailSending ? 'Sending...' : '📧 Email all results'}
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {loading && <div className="text-gray-400 text-sm">Loading...</div>}
+
+            {!loading && proteins.length === 0 && (
+              <div className="text-center py-16 bg-white rounded-xl border border-stone-200">
+                <p className="text-gray-400 text-sm mb-4">No saved proteins yet.</p>
+                <Link href="/dashboard" className="text-emerald-600 hover:text-emerald-500 text-sm">Browse proteins &rarr;</Link>
+              </div>
+            )}
+
+            {proteins.length > 0 && (
+              <div className="grid grid-cols-1 gap-4">
+                {proteins.map(p => (
+                  <div key={p.id} className={`bg-white border rounded-xl transition ${selected?.id === p.id ? 'border-emerald-300 shadow-sm' : 'border-stone-200'}`}>
+                    <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="min-w-0">
+                          <Link href={`/dashboard/protein/${p.uniprot_id}`} className="font-medium text-gray-900 hover:text-emerald-600 transition">{p.gene}</Link>
+                          <p className="text-xs text-gray-400 mt-0.5 truncate">{p.uniprot_id} · {p.organism}</p>
+                        </div>
+                        <span className={`text-xs font-medium px-2 py-1 rounded-full shrink-0 ${tierColor(p.best_score)}`}>{tierLabel(p.best_score)}</span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap shrink-0">
+                        <span className="text-sm font-mono text-gray-900">{p.best_score?.toFixed(3)}</span>
+                        <button
+                          onClick={() => setSelected(selected?.id === p.id ? null : p)}
+                          className="text-xs px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition"
+                        >
+                          {selected?.id === p.id ? 'Hide 3D' : 'View 3D'}
+                        </button>
+                        <Link href={`/dashboard/search?q=${p.gene}`} className="text-xs px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition">
+                          Literature
+                        </Link>
+                        {emailSent[p.id] ? (
+                          <span className="text-xs text-emerald-600 font-medium">✓ Sent</span>
+                        ) : (
+                          <button
+                            onClick={() => sendEmailReport(p)}
+                            disabled={emailSending === p.id}
+                            className="text-xs px-3 py-1.5 bg-stone-50 hover:bg-stone-100 text-gray-600 rounded-lg transition border border-stone-200"
+                          >
+                            {emailSending === p.id ? '...' : '📧'}
+                          </button>
+                        )}
+                        <button
+                          onClick={() => removeProtein(p.id)}
+                          className="text-xs w-7 h-7 flex items-center justify-center text-red-400 hover:text-white hover:bg-red-500 rounded-lg transition border border-red-100 hover:border-red-500"
+                          title="Remove"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                    <div className="px-4 sm:px-5 pb-4">
+                      <textarea
+                        defaultValue={p.notes || ''}
+                        onBlur={e => saveNote(p.id, e.target.value)}
+                        placeholder="Add notes about this protein..."
+                        className="w-full text-xs bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400 resize-none"
+                        rows={2}
+                      />
+                      {savingNote === p.id && <span className="text-xs text-gray-400">Saving...</span>}
+                    </div>
+
+                    {selected?.id === p.id && (
+                      <div className="border-t border-stone-100 p-4">
+                        <div className="flex gap-2 mb-3">
+                          <span className="text-xs text-gray-400">drag to rotate · scroll to zoom</span>
+                        </div>
+                        <div id="result-viewer" style={{ width: '100%', height: '380px', background: '#f5f0eb', borderRadius: '8px' }} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

@@ -17,6 +17,7 @@ export default function ProteinDetail() {
   const [mlPrediction, setMlPrediction] = useState(null)
   const [userEmail, setUserEmail] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [authChecked, setAuthChecked] = useState(false)
   const [emailSending, setEmailSending] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const [show3D, setShow3D] = useState(false)
@@ -25,11 +26,12 @@ export default function ProteinDetail() {
 
   useEffect(() => {
     async function init() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
         setIsLoggedIn(true)
-        setUserEmail(user.email || '')
+        setUserEmail(session.user.email || '')
       }
+      setAuthChecked(true)
       const r = await fetch(`${API_URL}/proteins/${id}`)
       if (r.ok) {
         const data = await r.json()
@@ -57,6 +59,15 @@ export default function ProteinDetail() {
     }
     init()
   }, [id])
+
+  // Keep auth state in sync if the user logs in/out in another tab
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session?.user)
+      setUserEmail(session?.user?.email || '')
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
   // 3D viewer
   useEffect(() => {
@@ -89,11 +100,11 @@ export default function ProteinDetail() {
   }, [show3D, protein])
 
   async function saveProtein() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) { router.push('/auth/signup'); return }
     setSaving(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { router.push('/auth/signup'); return }
     await supabase.from('saved_proteins').upsert({
-      user_id: user.id,
+      user_id: session.user.id,
       uniprot_id: protein.uniprot_id,
       gene: protein.gene,
       organism: protein.organism,
@@ -104,7 +115,13 @@ export default function ProteinDetail() {
     setSaving(false)
   }
 
+  function handle3DClick() {
+    if (!isLoggedIn) { router.push('/auth/signup'); return }
+    setShow3D(!show3D)
+  }
+
   async function handleEmailReport() {
+    if (!isLoggedIn) { router.push('/auth/signup'); return }
     if (!userEmail || !protein) return
     setEmailSending(true)
     try {
@@ -143,11 +160,11 @@ export default function ProteinDetail() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center gap-6">
-        <Link href="/" className="flex items-center gap-2">
+      <nav className="bg-white border-b border-stone-200 px-4 sm:px-8 py-3 flex items-center gap-3 sm:gap-6 overflow-x-auto">
+        <Link href="/" className="flex items-center gap-2 shrink-0">
           <img src="/logo.png" alt="ResistAI" className="h-8 w-auto" />
         </Link>
-        <div className="flex gap-4 text-sm text-gray-500">
+        <div className="flex gap-3 sm:gap-4 text-sm text-gray-500 shrink-0 whitespace-nowrap">
           <Link href="/" className="hover:text-gray-900 transition">Home</Link>
           <Link href="/dashboard" className="hover:text-gray-900 transition">Proteins</Link>
           <Link href="/dashboard/search" className="hover:text-gray-900 transition">Literature</Link>
@@ -155,32 +172,32 @@ export default function ProteinDetail() {
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-8 py-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-8 py-6 sm:py-10">
         <Link href="/dashboard" className="text-sm text-gray-400 hover:text-gray-700 transition mb-6 inline-block">&larr; Back to proteins</Link>
 
         {/* Main info */}
-        <div className="bg-white rounded-xl border border-stone-200 p-8 mb-6">
-          <div className="flex items-start justify-between">
+        <div className="bg-white rounded-xl border border-stone-200 p-5 sm:p-8 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">{protein.gene}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{protein.gene}</h1>
               <p className="text-gray-500 mt-1">{protein.organism}</p>
-              <p className="text-sm text-gray-400 mt-1">UniProt: {protein.uniprot_id} · Family: {protein.family}</p>
+              <p className="text-sm text-gray-400 mt-1 break-words">UniProt: {protein.uniprot_id} · Family: {protein.family}</p>
             </div>
-            <span className={`text-sm font-medium px-3 py-1.5 rounded-full ${tierColor}`}>
+            <span className={`text-sm font-medium px-3 py-1.5 rounded-full self-start shrink-0 ${tierColor}`}>
               {d.tier.charAt(0).toUpperCase() + d.tier.slice(1)} druggability
             </span>
           </div>
-          <div className="grid grid-cols-3 gap-4 mt-8">
-            <div className="bg-stone-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-emerald-600">{d.best_score?.toFixed(3)}</div>
+          <div className="grid grid-cols-3 gap-3 sm:gap-4 mt-6 sm:mt-8">
+            <div className="bg-stone-50 rounded-lg p-3 sm:p-4 text-center">
+              <div className="text-xl sm:text-2xl font-bold text-emerald-600">{d.best_score?.toFixed(3)}</div>
               <div className="text-xs text-gray-400 mt-1">Best score</div>
             </div>
-            <div className="bg-stone-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-gray-900">{d.total_pockets}</div>
+            <div className="bg-stone-50 rounded-lg p-3 sm:p-4 text-center">
+              <div className="text-xl sm:text-2xl font-bold text-gray-900">{d.total_pockets}</div>
               <div className="text-xs text-gray-400 mt-1">Total pockets</div>
             </div>
-            <div className="bg-stone-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-gray-900">{d.high_pockets}</div>
+            <div className="bg-stone-50 rounded-lg p-3 sm:p-4 text-center">
+              <div className="text-xl sm:text-2xl font-bold text-gray-900">{d.high_pockets}</div>
               <div className="text-xs text-gray-400 mt-1">High pockets</div>
             </div>
           </div>
@@ -188,12 +205,12 @@ export default function ProteinDetail() {
 
         {/* ML Prediction */}
         {mlPrediction && (
-          <div className="bg-white rounded-xl border border-stone-200 p-8 mb-6">
-            <div className="flex items-center gap-2 mb-4">
+          <div className="bg-white rounded-xl border border-stone-200 p-5 sm:p-8 mb-6">
+            <div className="flex items-center gap-2 mb-4 flex-wrap">
               <h2 className="font-semibold text-gray-900">ML Druggability Prediction</h2>
               <span className="text-xs text-gray-400 bg-stone-50 px-2 py-0.5 rounded-full border border-stone-200">XGBoost + ESM-2</span>
             </div>
-            <div className="grid grid-cols-3 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
               <div className="bg-stone-50 rounded-lg p-4 text-center">
                 <div className={`text-xl font-bold ${mlPrediction.predicted_tier === 'high' ? 'text-emerald-600' : mlPrediction.predicted_tier === 'medium' ? 'text-amber-600' : 'text-red-600'}`}>
                   {mlPrediction.predicted_tier.charAt(0).toUpperCase() + mlPrediction.predicted_tier.slice(1)}
@@ -219,7 +236,7 @@ export default function ProteinDetail() {
 
         {/* Top pockets */}
         {protein.top_pockets?.length > 0 && (
-          <div className="bg-white rounded-xl border border-stone-200 p-8 mb-6">
+          <div className="bg-white rounded-xl border border-stone-200 p-5 sm:p-8 mb-6">
             <h2 className="font-semibold text-gray-900 mb-4">Top Binding Pockets</h2>
             <div className="space-y-3">
               {protein.top_pockets.map(p => (
@@ -239,8 +256,8 @@ export default function ProteinDetail() {
         )}
 
         {/* Similar proteins */}
-        <div className="bg-white rounded-xl border border-stone-200 p-8 mb-6">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="bg-white rounded-xl border border-stone-200 p-5 sm:p-8 mb-6">
+          <div className="flex items-center gap-2 mb-4 flex-wrap">
             <h2 className="font-semibold text-gray-900">Similar Proteins</h2>
             <span className="text-xs text-gray-400 bg-stone-50 px-2 py-0.5 rounded-full border border-stone-200">ESM-2 embedding similarity</span>
           </div>
@@ -291,9 +308,11 @@ export default function ProteinDetail() {
           <a href={`https://alphafold.ebi.ac.uk/entry/${protein.uniprot_id}`} target="_blank" rel="noopener noreferrer" className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">AlphaFold</a>
           <Link href={`/dashboard/search?q=${encodeURIComponent(protein.gene)}`} className="px-4 py-2 border border-stone-200 hover:border-stone-300 text-gray-700 text-sm rounded-lg transition">Search Literature</Link>
 
-          {isLoggedIn ? (
+          {!authChecked ? (
+            <div className="h-9 w-56 bg-stone-100 rounded-lg animate-pulse" />
+          ) : isLoggedIn ? (
             <>
-              <button onClick={() => setShow3D(!show3D)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm rounded-lg transition">
+              <button onClick={handle3DClick} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm rounded-lg transition">
                 {show3D ? 'Hide 3D' : 'View 3D'}
               </button>
               <button onClick={saveProtein} disabled={saving || saved} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm rounded-lg transition">
@@ -309,17 +328,17 @@ export default function ProteinDetail() {
             </>
           ) : (
             <>
-              <button disabled className="px-4 py-2 bg-stone-100 text-gray-400 text-sm rounded-lg cursor-not-allowed">🔒 View 3D</button>
-              <button disabled className="px-4 py-2 bg-stone-100 text-gray-400 text-sm rounded-lg cursor-not-allowed">🔒 Save to Results</button>
-              <button disabled className="px-4 py-2 bg-stone-100 text-gray-400 text-sm rounded-lg cursor-not-allowed">🔒 Email Report</button>
+              <button onClick={() => router.push('/auth/signup')} className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-gray-500 text-sm rounded-lg transition">🔒 View 3D</button>
+              <button onClick={() => router.push('/auth/signup')} className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-gray-500 text-sm rounded-lg transition">🔒 Save to Results</button>
+              <button onClick={() => router.push('/auth/signup')} className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-gray-500 text-sm rounded-lg transition">🔒 Email Report</button>
             </>
           )}
         </div>
 
         {/* 3D Viewer (toggled) */}
         {show3D && isLoggedIn && (
-          <div className="mt-6 bg-white rounded-xl border border-stone-200 p-6">
-            <div className="flex items-center gap-2 mb-3">
+          <div className="mt-6 bg-white rounded-xl border border-stone-200 p-4 sm:p-6">
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
               <h2 className="font-semibold text-gray-900 text-sm">3D Structure</h2>
               <span className="text-xs text-gray-400 bg-stone-50 px-2 py-0.5 rounded-full border border-stone-200">AlphaFold · 3Dmol.js</span>
               <span className="text-xs text-gray-400 ml-auto">drag to rotate · scroll to zoom</span>
@@ -329,12 +348,12 @@ export default function ProteinDetail() {
         )}
 
         {/* Sign-up prompt */}
-        {!isLoggedIn && (
-          <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-xl p-5 flex items-center justify-between">
+        {authChecked && !isLoggedIn && (
+          <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <p className="text-sm text-emerald-800">
               <strong>Sign up free</strong> to save proteins, view 3D structures, and email analysis reports.
             </p>
-            <Link href="/auth/signup" className="shrink-0 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition">
+            <Link href="/auth/signup" className="shrink-0 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition text-center">
               Sign up →
             </Link>
           </div>

@@ -24,13 +24,19 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function init() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.push('/auth/login'); return }
-      setUser(user)
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) setUser(session.user)
       await Promise.all([fetchStats(), fetchProteins('', 0)])
       setLoading(false)
     }
     init()
+  }, [])
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null)
+    })
+    return () => subscription.unsubscribe()
   }, [])
 
   async function fetchStats() {
@@ -102,17 +108,17 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-stone-50">
-        <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
+        <nav className="bg-white border-b border-stone-200 px-4 sm:px-8 py-3 flex items-center justify-between">
           <div className="h-8 w-28 bg-stone-100 rounded-lg animate-pulse" />
-          <div className="flex gap-4">
+          <div className="hidden sm:flex gap-4">
             {[80, 64, 72, 60].map(w => (
               <div key={w} className="h-4 bg-stone-100 rounded animate-pulse" style={{ width: w }} />
             ))}
           </div>
           <div className="h-8 w-20 bg-stone-100 rounded-lg animate-pulse" />
         </nav>
-        <div className="px-8 py-6 max-w-7xl mx-auto">
-          <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="px-4 sm:px-8 py-6 max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
             {[1,2,3,4].map(i => (
               <div key={i} className="bg-white border border-stone-200 rounded-xl p-4">
                 <div className="h-3 w-20 bg-stone-100 rounded animate-pulse mb-3" />
@@ -140,27 +146,33 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2">
+      <nav className="bg-white border-b border-stone-200 px-4 sm:px-8 py-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 sm:gap-6 min-w-0 overflow-x-auto">
+          <Link href="/" className="flex items-center gap-2 shrink-0">
             <Image src="/logo.png" alt="ResistAI" width={160} height={40} className="h-8 w-auto" style={{width: "auto"}} />
           </Link>
-          <div className="flex gap-4 text-sm text-gray-500">
+          <div className="flex gap-3 sm:gap-4 text-sm text-gray-500 shrink-0 whitespace-nowrap">
             <Link href="/" className="hover:text-gray-900 transition">Home</Link>
             <Link href="/dashboard" className="text-emerald-600 font-medium">Proteins</Link>
             <Link href="/dashboard/search" className="hover:text-gray-900 transition">Literature</Link>
-            <Link href="/dashboard/results" className="hover:text-gray-900 transition">My Results</Link>
+            {user && <Link href="/dashboard/results" className="hover:text-gray-900 transition">My Results</Link>}
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-400">{user?.email}</span>
-          <button onClick={handleSignOut} className="text-sm text-gray-500 hover:text-gray-900 transition">Sign out</button>
+        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+          {user ? (
+            <>
+              <span className="hidden sm:inline text-sm text-gray-400">{user.email}</span>
+              <button onClick={handleSignOut} className="text-sm text-gray-500 hover:text-gray-900 transition">Sign out</button>
+            </>
+          ) : (
+            <Link href="/auth/signup" className="text-sm px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition whitespace-nowrap">Sign up free</Link>
+          )}
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8">
         {stats && (
-          <div className="grid grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             {[
               { label: 'Total Proteins', value: stats.total_proteins },
               { label: 'High Druggability', value: stats.high_druggability, color: 'text-emerald-600' },
@@ -175,7 +187,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className="flex gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <input
             type="text"
             placeholder="Search gene, organism or family..."
@@ -201,9 +213,9 @@ export default function Dashboard() {
           </div>
         )}
         <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
+          <div className="px-4 sm:px-6 py-4 border-b border-stone-100 flex items-center justify-between gap-2">
             <h2 className="font-semibold text-gray-900">Resistance Proteins</h2>
-            <span className="text-sm text-gray-400">{filtered.length} loaded · {stats?.total_proteins} total</span>
+            <span className="text-xs sm:text-sm text-gray-400 whitespace-nowrap">{filtered.length} loaded · {stats?.total_proteins} total</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
