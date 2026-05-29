@@ -1,7 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
-import { createClient } from '../../../lib/supabase'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import Link from 'next/link'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
@@ -15,16 +13,6 @@ export default function AnalysePage() {
   const [mlPrediction, setMlPrediction] = useState(null)
   const [aiAnswer, setAiAnswer] = useState('')
   const [aiLoading, setAiLoading] = useState(false)
-  const router = useRouter()
-  const supabase = createClient()
-
-  useEffect(() => {
-    async function init() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) router.push('/auth/login')
-    }
-    init()
-  }, [])
 
   async function handleAnalyse(e) {
     e.preventDefault()
@@ -105,11 +93,11 @@ export default function AnalysePage() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <nav className="bg-white border-b border-stone-200 px-8 py-3 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
+      <nav className="bg-white border-b border-stone-200 px-4 sm:px-8 py-3 flex items-center justify-between overflow-x-auto">
+        <Link href="/" className="flex items-center gap-2 shrink-0">
           <img src="/logo.png" alt="ResistAI" className="h-8 w-auto" />
         </Link>
-        <div className="flex gap-4 text-sm text-gray-500">
+        <div className="flex gap-3 sm:gap-4 text-sm text-gray-500 shrink-0 whitespace-nowrap">
           <Link href="/" className="hover:text-gray-900 transition">Home</Link>
           <Link href="/dashboard" className="hover:text-gray-900 transition">Proteins</Link>
           <Link href="/dashboard/search" className="hover:text-gray-900 transition">Literature</Link>
@@ -117,13 +105,13 @@ export default function AnalysePage() {
         </div>
       </nav>
 
-      <div className="max-w-3xl mx-auto px-8 py-12">
+      <div className="max-w-3xl mx-auto px-4 sm:px-8 py-8 sm:py-12">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Analyse a protein</h1>
           <p className="text-gray-500 text-sm">Enter any UniProt ID to get druggability analysis, ESM-2 similarity search, ML prediction, and AI-powered literature summary.</p>
         </div>
 
-        <form onSubmit={handleAnalyse} className="flex gap-3 mb-4">
+        <form onSubmit={handleAnalyse} className="flex flex-col sm:flex-row gap-3 mb-4">
           <input
             type="text"
             value={query}
@@ -134,13 +122,13 @@ export default function AnalysePage() {
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition"
+            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition shrink-0"
           >
             {loading ? 'Analysing...' : 'Analyse →'}
           </button>
         </form>
 
-        <div className="flex items-center gap-2 mb-8">
+        <div className="flex items-center gap-2 mb-8 flex-wrap">
           <span className="text-xs text-gray-400">Examples:</span>
           {examples.map(ex => (
             <button key={ex} onClick={() => setQuery(ex)}
@@ -167,8 +155,8 @@ export default function AnalysePage() {
           <div className="space-y-4">
 
             {/* Header */}
-            <div className="bg-white border border-stone-200 rounded-xl p-6">
-              <div className="flex items-start justify-between mb-4">
+            <div className="bg-white border border-stone-200 rounded-xl p-5 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">{result.uniprot_id}</h2>
                   <p className="text-xs text-gray-400 mt-1">
@@ -176,24 +164,24 @@ export default function AnalysePage() {
                   </p>
                 </div>
                 {result.druggability && (
-                  <span className={`text-sm font-medium px-3 py-1.5 rounded-full border ${tierColor(result.druggability.tier)}`}>
+                  <span className={`text-sm font-medium px-3 py-1.5 rounded-full border self-start shrink-0 ${tierColor(result.druggability.tier)}`}>
                     {result.druggability.tier.charAt(0).toUpperCase() + result.druggability.tier.slice(1)} druggability
                   </span>
                 )}
               </div>
 
               {result.druggability && (
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-stone-50 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-emerald-600">{result.druggability.best_score?.toFixed(3)}</div>
+                <div className="grid grid-cols-3 gap-3 sm:gap-4">
+                  <div className="bg-stone-50 rounded-lg p-3 sm:p-4 text-center">
+                    <div className="text-xl sm:text-2xl font-bold text-emerald-600">{result.druggability.best_score?.toFixed(3)}</div>
                     <div className="text-xs text-gray-400 mt-1">Best score</div>
                   </div>
-                  <div className="bg-stone-50 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-gray-900">{result.druggability.total_pockets}</div>
+                  <div className="bg-stone-50 rounded-lg p-3 sm:p-4 text-center">
+                    <div className="text-xl sm:text-2xl font-bold text-gray-900">{result.druggability.total_pockets}</div>
                     <div className="text-xs text-gray-400 mt-1">Total pockets</div>
                   </div>
-                  <div className="bg-stone-50 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-gray-900">{result.druggability.high_pockets}</div>
+                  <div className="bg-stone-50 rounded-lg p-3 sm:p-4 text-center">
+                    <div className="text-xl sm:text-2xl font-bold text-gray-900">{result.druggability.high_pockets}</div>
                     <div className="text-xs text-gray-400 mt-1">High pockets</div>
                   </div>
                 </div>
@@ -206,12 +194,12 @@ export default function AnalysePage() {
 
             {/* ML Prediction */}
             {mlPrediction && (
-              <div className="bg-white border border-stone-200 rounded-xl p-6">
-                <div className="flex items-center gap-2 mb-4">
+              <div className="bg-white border border-stone-200 rounded-xl p-5 sm:p-6">
+                <div className="flex items-center gap-2 mb-4 flex-wrap">
                   <h3 className="font-semibold text-gray-900 text-sm">ML prediction</h3>
                   <span className="text-xs text-gray-400 bg-stone-50 px-2 py-0.5 rounded-full border border-stone-200">XGBoost + ESM-2</span>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="bg-stone-50 rounded-lg p-4 text-center">
                     <div className={`text-xl font-bold ${mlPrediction.predicted_tier === 'high' ? 'text-emerald-600' : mlPrediction.predicted_tier === 'medium' ? 'text-amber-600' : 'text-red-600'}`}>
                       {mlPrediction.predicted_tier.charAt(0).toUpperCase() + mlPrediction.predicted_tier.slice(1)}
@@ -236,8 +224,8 @@ export default function AnalysePage() {
 
             {/* Similar proteins */}
             {similar.length > 0 && (
-              <div className="bg-white border border-stone-200 rounded-xl p-6">
-                <div className="flex items-center gap-2 mb-4">
+              <div className="bg-white border border-stone-200 rounded-xl p-5 sm:p-6">
+                <div className="flex items-center gap-2 mb-4 flex-wrap">
                   <h3 className="font-semibold text-gray-900 text-sm">Similar proteins</h3>
                   <span className="text-xs text-gray-400 bg-stone-50 px-2 py-0.5 rounded-full border border-stone-200">ESM-2 cosine similarity</span>
                 </div>
@@ -245,12 +233,12 @@ export default function AnalysePage() {
                   {similar.map(s => (
                     <Link key={s.uniprot_id} href={`/dashboard/protein/${s.uniprot_id}`}
                       className="flex items-center justify-between py-2 px-3 rounded-lg border border-stone-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition">
-                      <div>
+                      <div className="min-w-0">
                         <span className="text-sm font-medium text-gray-900">{s.gene}</span>
                         <span className={`text-xs ml-2 px-2 py-0.5 rounded-full font-medium ${s.druggability_tier === 'high' ? 'text-emerald-600 bg-emerald-50' : s.druggability_tier === 'medium' ? 'text-amber-600 bg-amber-50' : 'text-red-600 bg-red-50'}`}>{s.druggability_tier}</span>
-                        <p className="text-xs text-gray-400 mt-0.5">{s.organism}</p>
+                        <p className="text-xs text-gray-400 mt-0.5 truncate">{s.organism}</p>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right shrink-0 ml-3">
                         <div className="text-xs text-gray-400">similarity</div>
                         <div className="text-sm font-mono font-medium text-emerald-600">{s.similarity?.toFixed(3)}</div>
                       </div>
@@ -262,8 +250,8 @@ export default function AnalysePage() {
 
             {/* AI Summary */}
             {(aiLoading || aiAnswer) && (
-              <div className="bg-white border border-emerald-200 rounded-xl p-6">
-                <div className="flex items-center gap-2 mb-3">
+              <div className="bg-white border border-emerald-200 rounded-xl p-5 sm:p-6">
+                <div className="flex items-center gap-2 mb-3 flex-wrap">
                   <h3 className="font-semibold text-gray-900 text-sm">AI research summary</h3>
                   <span className="text-xs text-gray-400 ml-auto">Powered by Llama 3.3</span>
                 </div>
