@@ -248,6 +248,13 @@ export default function AnalysePage() {
               </div>
             )}
 
+            {/* On-demand note: ML & similarity are database-only */}
+            {result.source === 'on_demand' && !mlPrediction && similar.length === 0 && (
+              <div className="bg-stone-50 border border-stone-200 rounded-xl p-5 text-sm text-gray-500">
+                <span className="font-medium text-gray-700">ML prediction & ESM-2 similarity</span> are available for the 2,433 proteins in our pre-computed database. This protein was analysed on-demand — the fpocket druggability score above is computed live from its AlphaFold structure.
+              </div>
+            )}
+
             {/* AI Summary */}
             {(aiLoading || aiAnswer) && (
               <div className="bg-white border border-emerald-200 rounded-xl p-5 sm:p-6">

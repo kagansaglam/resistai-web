@@ -80,7 +80,6 @@ export default function Home() {
                 <li className="flex items-start gap-3"><span className="text-emerald-500 mt-0.5 shrink-0">✓</span><span><strong>Druggability scoring</strong> — AlphaFold gives structure; ResistAI ranks 2,433 pockets automatically</span></li>
                 <li className="flex items-start gap-3"><span className="text-emerald-500 mt-0.5 shrink-0">✓</span><span><strong>AI literature summary</strong> — Llama 3.3 synthesises PubMed findings with PMID citations in seconds</span></li>
                 <li className="flex items-start gap-3"><span className="text-emerald-500 mt-0.5 shrink-0">✓</span><span><strong>ESM-2 similarity search</strong> — find evolutionarily related resistance targets instantly</span></li>
-                <li className="flex items-start gap-3"><span className="text-emerald-500 mt-0.5 shrink-0">✓</span><span><strong>On-demand druggability</strong> — enter any UniProt ID and fpocket scores it live; AlphaFold gives a structure, ResistAI gives the druggable pockets</span></li>
                 <li className="flex items-start gap-3"><span className="text-emerald-500 mt-0.5 shrink-0">✓</span><span><strong>One platform</strong> — structure + pockets + embeddings + literature, fully integrated</span></li>
               </ul>
             </div>
@@ -117,7 +116,6 @@ export default function Home() {
             { icon: "🤖", title: "AI Research Assistant", desc: "Ask questions grounded in 2,508 PubMed articles via RAG + Llama 3.3, with PMID-cited answers.", href: "/dashboard/search" },
             { icon: "📊", title: "Druggability Dashboard", desc: "Browse 2,433 proteins with fpocket scores, XGBoost ML predictions, and ESM-2 similarity search.", href: "/dashboard" },
             { icon: "🔬", title: "3D Protein Viewer", desc: "Interactive 3D AlphaFold structures with secondary-structure colouring. Powered by 3Dmol.js.", href: "/dashboard" },
-            { icon: "🧬", title: "On-Demand fpocket", desc: "Any UniProt ID, scored live — fpocket runs on the AlphaFold structure in real time. No local install, no pipeline.", href: "/dashboard/analyse" },
             { icon: "📧", title: "Email Reports", desc: "Send full analysis reports — druggability scores, ML predictions, and cited literature — to your inbox.", href: "/dashboard/report" },
           ].map((f) => (
             <Link key={f.title} href={f.href} className="p-6 border border-stone-200 bg-white rounded-xl hover:border-emerald-300 hover:shadow-sm transition block">
