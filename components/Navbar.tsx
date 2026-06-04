@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: '/architecture', label: 'Architecture' },
   { href: '/case-study/vim7', label: 'VIM-7' },
   { href: '/case-study/inha', label: 'InhA' },
+  { href: '/case-study/kpc2', label: 'KPC-2' },
   { href: 'https://github.com/kagansaglam/resistai', label: 'GitHub', external: true },
 ]
 

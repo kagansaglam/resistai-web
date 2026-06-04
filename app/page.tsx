@@ -159,6 +159,7 @@ export default function Home() {
               <a href="https://resistai-api.onrender.com/docs" target="_blank" rel="noopener noreferrer" className="hover:text-gray-700 transition">API docs ↗</a>
               <Link href="/case-study/vim7" className="hover:text-gray-700 transition">Case study: VIM-7</Link>
               <Link href="/case-study/inha" className="hover:text-gray-700 transition">Case study: InhA</Link>
+              <Link href="/case-study/kpc2" className="hover:text-gray-700 transition">Case study: KPC-2</Link>
             </div>
           </div>
         </div>
