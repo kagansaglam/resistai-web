@@ -15,14 +15,15 @@ const NAV_LINKS = [
   { href: '#how-it-works', label: 'How it works', anchor: true },
   { href: '#features', label: 'Features', anchor: true },
   { href: '/architecture', label: 'Architecture' },
-  { href: 'https://github.com/kagansaglam/resistai', label: 'GitHub', external: true },
 ]
+
+const GITHUB_URL = 'https://github.com/kagansaglam/resistai'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [csOpen, setCsOpen] = useState(false)       // desktop dropdown
-  const [csMobileOpen, setCsMobileOpen] = useState(false)  // mobile accordion
+  const [csOpen, setCsOpen] = useState(false)
+  const [csMobileOpen, setCsMobileOpen] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -42,9 +43,7 @@ export default function Navbar() {
         {/* Desktop nav */}
         <div className="hidden md:flex gap-5 text-sm text-gray-500 items-center">
           {NAV_LINKS.map(link =>
-            link.external ? (
-              <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition">{link.label}</a>
-            ) : link.anchor ? (
+            link.anchor ? (
               <a key={link.href} href={link.href} className="hover:text-gray-900 transition">{link.label}</a>
             ) : (
               <Link key={link.href} href={link.href} className="hover:text-gray-900 transition">{link.label}</Link>
@@ -79,6 +78,9 @@ export default function Navbar() {
               </div>
             )}
           </div>
+
+          {/* GitHub (after case studies) */}
+          <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition">GitHub</a>
         </div>
 
         <div className="hidden md:flex gap-3 shrink-0">
@@ -109,13 +111,7 @@ export default function Navbar() {
         <div className="md:hidden fixed inset-0 z-40 flex flex-col" style={{ top: '57px' }}>
           <div className="bg-white border-b border-stone-200 px-6 py-4 flex flex-col gap-1 shadow-lg">
             {NAV_LINKS.map(link =>
-              link.external ? (
-                <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer"
-                  className="py-2.5 text-sm text-gray-600 hover:text-gray-900 border-b border-stone-100 transition"
-                  onClick={handleClose}>
-                  {link.label} ↗
-                </a>
-              ) : link.anchor ? (
+              link.anchor ? (
                 <a key={link.href} href={link.href}
                   className="py-2.5 text-sm text-gray-600 hover:text-gray-900 border-b border-stone-100 transition"
                   onClick={handleClose}>
@@ -150,6 +146,13 @@ export default function Navbar() {
                 ))}
               </div>
             )}
+
+            {/* GitHub (after case studies) */}
+            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer"
+              className="py-2.5 text-sm text-gray-600 hover:text-gray-900 border-b border-stone-100 transition"
+              onClick={handleClose}>
+              GitHub ↗
+            </a>
 
             <div className="flex gap-3 pt-3">
               <Link href="/auth/login" onClick={handleClose} className="flex-1 text-center px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg transition">Sign in</Link>
