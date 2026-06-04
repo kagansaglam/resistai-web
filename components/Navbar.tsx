@@ -3,21 +3,26 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
+const CASE_STUDIES = [
+  { href: '/case-study/vim7', label: 'VIM-7 metallo-β-lactamase' },
+  { href: '/case-study/inha', label: 'InhA (TB target)' },
+  { href: '/case-study/kpc2', label: 'KPC-2 carbapenemase' },
+]
+
 const NAV_LINKS = [
   { href: '#why-resistai', label: 'Why ResistAI', anchor: true },
   { href: '/dashboard/analyse', label: 'Analyse' },
   { href: '#how-it-works', label: 'How it works', anchor: true },
   { href: '#features', label: 'Features', anchor: true },
   { href: '/architecture', label: 'Architecture' },
-  { href: '/case-study/vim7', label: 'VIM-7' },
-  { href: '/case-study/inha', label: 'InhA' },
-  { href: '/case-study/kpc2', label: 'KPC-2' },
   { href: 'https://github.com/kagansaglam/resistai', label: 'GitHub', external: true },
 ]
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [csOpen, setCsOpen] = useState(false)       // desktop dropdown
+  const [csMobileOpen, setCsMobileOpen] = useState(false)  // mobile accordion
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -25,8 +30,7 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Close menu on route change / anchor click
-  const handleClose = () => setOpen(false)
+  const handleClose = () => { setOpen(false); setCsMobileOpen(false) }
 
   return (
     <>
@@ -36,7 +40,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex gap-5 text-sm text-gray-500">
+        <div className="hidden md:flex gap-5 text-sm text-gray-500 items-center">
           {NAV_LINKS.map(link =>
             link.external ? (
               <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition">{link.label}</a>
@@ -46,6 +50,35 @@ export default function Navbar() {
               <Link key={link.href} href={link.href} className="hover:text-gray-900 transition">{link.label}</Link>
             )
           )}
+
+          {/* Case Studies dropdown (hover) */}
+          <div
+            className="relative"
+            onMouseEnter={() => setCsOpen(true)}
+            onMouseLeave={() => setCsOpen(false)}
+          >
+            <button className="flex items-center gap-1 hover:text-gray-900 transition">
+              Case Studies
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" className={`transition-transform ${csOpen ? 'rotate-180' : ''}`}>
+                <path d="M3 4.5L6 7.5L9 4.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            {csOpen && (
+              <div className="absolute top-full left-0 pt-2 w-60">
+                <div className="bg-white border border-stone-200 rounded-lg shadow-lg py-1.5">
+                  {CASE_STUDIES.map(cs => (
+                    <Link
+                      key={cs.href}
+                      href={cs.href}
+                      className="block px-4 py-2 text-sm text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition"
+                    >
+                      {cs.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="hidden md:flex gap-3 shrink-0">
@@ -78,24 +111,46 @@ export default function Navbar() {
             {NAV_LINKS.map(link =>
               link.external ? (
                 <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer"
-                  className="py-2.5 text-sm text-gray-600 hover:text-gray-900 border-b border-stone-100 last:border-0 transition"
+                  className="py-2.5 text-sm text-gray-600 hover:text-gray-900 border-b border-stone-100 transition"
                   onClick={handleClose}>
                   {link.label} ↗
                 </a>
               ) : link.anchor ? (
                 <a key={link.href} href={link.href}
-                  className="py-2.5 text-sm text-gray-600 hover:text-gray-900 border-b border-stone-100 last:border-0 transition"
+                  className="py-2.5 text-sm text-gray-600 hover:text-gray-900 border-b border-stone-100 transition"
                   onClick={handleClose}>
                   {link.label}
                 </a>
               ) : (
                 <Link key={link.href} href={link.href}
-                  className="py-2.5 text-sm text-gray-600 hover:text-gray-900 border-b border-stone-100 last:border-0 transition"
+                  className="py-2.5 text-sm text-gray-600 hover:text-gray-900 border-b border-stone-100 transition"
                   onClick={handleClose}>
                   {link.label}
                 </Link>
               )
             )}
+
+            {/* Case Studies (mobile accordion) */}
+            <button
+              onClick={() => setCsMobileOpen(v => !v)}
+              className="flex items-center justify-between py-2.5 text-sm text-gray-600 hover:text-gray-900 border-b border-stone-100 transition"
+            >
+              Case Studies
+              <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" className={`transition-transform ${csMobileOpen ? 'rotate-180' : ''}`}>
+                <path d="M3 4.5L6 7.5L9 4.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            {csMobileOpen && (
+              <div className="flex flex-col border-b border-stone-100">
+                {CASE_STUDIES.map(cs => (
+                  <Link key={cs.href} href={cs.href} onClick={handleClose}
+                    className="py-2.5 pl-4 text-sm text-gray-500 hover:text-emerald-600 transition">
+                    {cs.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+
             <div className="flex gap-3 pt-3">
               <Link href="/auth/login" onClick={handleClose} className="flex-1 text-center px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg transition">Sign in</Link>
               <Link href="/auth/signup" onClick={handleClose} className="flex-1 text-center px-4 py-2 text-sm bg-emerald-600 text-white rounded-lg font-medium transition">Sign up</Link>
