@@ -32,6 +32,9 @@ export default function Home() {
             <p className="text-sm text-gray-600 leading-relaxed">Ranked druggable pockets + AI-cited literature in seconds — for any WHO priority pathogen.</p>
           </div>
         </div>
+        <p className="text-sm text-gray-500 max-w-2xl mx-auto mb-8 leading-relaxed">
+          <span className="text-gray-700 font-medium">AlphaFold predicts the structure. UniProt holds the sequence.</span> ResistAI tells you whether it&apos;s druggable — and runs the analysis live for any protein.
+        </p>
         <div className="flex gap-4 justify-center mb-16">
           <Link href="/auth/signup" className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition">Get started — free →</Link>
           <Link href="/dashboard/search?q=VIM-2+metallo-beta-lactamase" className="px-6 py-3 border border-stone-200 hover:border-emerald-300 hover:text-emerald-600 rounded-lg font-medium transition text-gray-700">Try with VIM-2 →</Link>
